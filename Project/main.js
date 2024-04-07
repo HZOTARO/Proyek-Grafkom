@@ -1,6 +1,6 @@
 /** @type {WebGLRenderingContext} */
 
-// import {Spongebob} from "./object/character/spongebob.js";
+import {Spongebob} from "./object/character/spongebob.js";
 // import {Skybox} from "./object/terrain/skybox.js";
 import {TexturedObject} from "./object/obj.js";
 
@@ -10,6 +10,25 @@ function main() {
     CANVAS.width = window.innerWidth;
     CANVAS.height = window.innerHeight;
 
+    // look up the elements we want to affect
+    var data = [
+        document.querySelector("#posxyz"),
+        document.querySelector("#alpha"),
+        document.querySelector("#theta")
+    ]
+
+    // Create text nodes to save some time for the browser.
+    var node = [
+        document.createTextNode(""),
+        document.createTextNode(""),
+        document.createTextNode("")
+    ]
+
+    // Add those text nodes where they need to go
+    for (let i = 0; i < data.length; i++) {
+        data[i].appendChild(node[i]);
+    }
+
     var drag = false;
     var X_prev = 0;
     var Y_prev = 0;
@@ -17,13 +36,13 @@ function main() {
     var dX = 0;
     var dY = 0;
 
-    var mX = 0;
-    var mY = -30;
-    var mZ = -30;
+    var pX = 0;
+    var pY = -30;
+    var pZ = -30;
 
-    var nX = 0;
-    var nY = 0;
-    var nZ = 0;
+    var mX = 0;
+    var mY = 0;
+    var mZ = 0;
 
     var THETA = 0;
     var ALPHA = Math.PI/4;
@@ -42,18 +61,18 @@ function main() {
         const savedY = localStorage.getItem("yValue") ?? "-30";
         const savedZ = localStorage.getItem("zValue") ?? "-30";
 
-        mX = Number.parseFloat(savedX);
-        mY = Number.parseFloat(savedY);
-        mZ = Number.parseFloat(savedZ)
+        pX = Number.parseFloat(savedX);
+        pY = Number.parseFloat(savedY);
+        pZ = Number.parseFloat(savedZ)
     }
 
     function saveRotation() {
         localStorage.setItem("thetaValue", THETA.toString());
         localStorage.setItem("alphaValue", ALPHA.toString());
 
-        localStorage.setItem("xValue", mX.toString());
-        localStorage.setItem("yValue", mY.toString());
-        localStorage.setItem("zValue", mZ.toString());
+        localStorage.setItem("xValue", pX.toString());
+        localStorage.setItem("yValue", pY.toString());
+        localStorage.setItem("zValue", pZ.toString());
     }
 
     var FRICTION = 0.8;
@@ -86,7 +105,7 @@ function main() {
         }else if (THETA <= -Math.PI){
             THETA += 2 * Math.PI;
         }
-        console.log(ALPHA, THETA)
+        // console.log(ALPHA, THETA)
     }
 
     var keyDown = function (e) {
@@ -115,9 +134,9 @@ function main() {
             SPEED /= 2;
         }
         else if (e.key === 'f'){
-            mX = 0;
-            mY = -30;
-            mZ = -30;
+            pX = 0;
+            pY = -30;
+            pZ = -30;
             THETA = 0;
             ALPHA = Math.PI/4;
             SPEED = 0;
@@ -128,13 +147,13 @@ function main() {
 
         A %= Math.PI * 2;
         T %= Math.PI * 2;
-        nX += SPEED * Math.cos(A) * Math.sin(T);
-        nZ += SPEED * Math.cos(A) * Math.cos(T);
-        nY += SPEED * Math.sin(A);
+        mX += SPEED * Math.cos(A) * Math.sin(T);
+        mZ += SPEED * Math.cos(A) * Math.cos(T);
+        mY += SPEED * Math.sin(A);
 
-        // mX += nX;
-        // mY += nY;
-        // mZ += nZ;
+        // mX += mX;
+        // pY += nY;
+        // pZ += nZ;
 
         SPEED = 0.5;
     }
@@ -162,21 +181,25 @@ function main() {
 
     GL.useProgram(Shader.TEXTURE);
 
-    // var object = new Spongebob(shader_vertex_source, shader_fragment_source_vertex);
+    var spongebob = new Spongebob(Shader.VERTEX_COLOR);
     // var land = new Skybox(shader_vertex_source, shader_fragment_source_texture);
     var vertex = QUADRIC.cuboid.createVertex({vT: true});
     var faces = QUADRIC.cuboid.createFaces(0);
     var obj = new TexturedObject(vertex, faces, Shader.TEXTURE);
 
-    var objects = [
-        // object,
+    var vertex_colored_object = [
+        spongebob,
         // land
+    ];
+    var textured_object = [
         obj
     ];
 
-
-    for (let i = 0; i < objects.length; i++) {
-        objects[i].setup();
+    for (let i = 0; i < vertex_colored_object.length; i++) {
+        vertex_colored_object[i].setup();
+    }
+    for (let i = 0; i < textured_object.length; i++) {
+        textured_object[i].setup();
     }
     /*========================= DRAWING ========================= */
     GL.clearColor(0.5, 0.5, 0.5, 0.0);
@@ -201,18 +224,18 @@ function main() {
 
             // ALPHA = Math.max(Math.min(0,ALPHA), -Math.PI/2);
         }
-        nX *= FRICTION;
-        nZ *= FRICTION;
-        nY *= FRICTION;
+        mX *= FRICTION;
+        mZ *= FRICTION;
+        mY *= FRICTION;
 
-        mX += nX;
-        mY += nY;
-        mZ += nZ;
+        pX += mX;
+        pY += mY;
+        pZ += mZ;
 
         VIEW_MATRIX = LIBS.get_I4();
 
         var temp = LIBS.get_I4();
-        LIBS.translate(temp, mX, mY, mZ);
+        LIBS.translate(temp, pX, pY, pZ);
         VIEW_MATRIX = LIBS.multiply(VIEW_MATRIX, temp);
 
         LIBS.rotate(temp, ALPHA, THETA, 0);
@@ -227,12 +250,23 @@ function main() {
         // LIBS.rotateX(object.MODEL_MATRIX, ALPHA);
         // LIBS.setPosition(MODEL_MATRIX,pos_x,pos_y,pos_z);
 
-        GL.useProgram(Shader.TEXTURE);
-        GL.bindTexture(GL.TEXTURE_2D, Texture[1]);
+        GL.useProgram(Shader.VERTEX_COLOR);
 
-        for (let i = 0; i < objects.length; i++) {
-            objects[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        for (let i = 0; i < vertex_colored_object.length; i++) {
+            vertex_colored_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
+
+        GL.useProgram(Shader.TEXTURE);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[3]);
+
+        for (let i = 0; i < textured_object.length; i++) {
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
+
+        // set the nodes
+        node[0].nodeValue = pX.toFixed(0) + ", " + pY.toFixed(0) + ", " + pZ.toFixed(0);
+        node[1].nodeValue = ALPHA.toFixed(2);
+        node[2].nodeValue = THETA.toFixed(2);
 
         window.requestAnimationFrame(animate);
     };

@@ -9,6 +9,15 @@
                 /*width: 88em;*/
                 /*height: 49.5em;*/
             }
+            #overlay {
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                font-family: monospace;
+                padding: 1em;
+            }
         </style>
     </head>
 
@@ -21,5 +30,10 @@
         <script src="object/quadric.js"></script>
         <script src="object/plane.js"></script>
         <canvas id="myCanvas" style="background-color: black;"></canvas>
+        <div id="overlay">
+            <div>Position: <span id="posxyz"></span></div>
+            <div>ALPHA: <span id="alpha"></span></div>
+            <div>THETA: <span id="theta"></span></div>
+        </div>
     </body>
 </html>
