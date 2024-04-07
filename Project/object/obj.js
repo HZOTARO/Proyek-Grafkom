@@ -1,49 +1,30 @@
+export {VertexColoredObject, TexturedObject, ColoredObject};
+
 class BaseObject{
     vertex = [];
     faces = [];
 
-    SHADER_PROGRAM = null;
-    _position = null;
-
     _MMatrix = null;
     _PMatrix = null;
     _VMatrix = null;
+    _position = null;
 
     TRIANGLE_VERTEX = null;
     TRIANGLE_FACES = null;
 
     MODEL_MATRIX = LIBS.get_I4();
 
-    constructor(vertex, faces, shader_vertex_source, shader_fragment_source) {
+    childs = [];
+
+    constructor(vertex, faces, shader_program) {
         this.vertex = vertex;
         this.faces = faces;
 
-        var compile_shader = function(source, type, typeString) {
-            var shader = GL.createShader(type);
-            GL.shaderSource(shader, source);
-            GL.compileShader(shader);
-            if (!GL.getShaderParameter(shader, GL.COMPILE_STATUS)) {
-                alert("ERROR IN " + typeString + " SHADER: " + GL.getShaderInfoLog(shader));
-                return false;
-            }
-            return shader;
-        };
-
-        var shader_vertex = compile_shader(shader_vertex_source, GL.VERTEX_SHADER, "VERTEX");
-        var shader_fragment = compile_shader(shader_fragment_source, GL.FRAGMENT_SHADER, "FRAGMENT");
-
-        this.SHADER_PROGRAM = GL.createProgram();
-        GL.attachShader(this.SHADER_PROGRAM, shader_vertex);
-        GL.attachShader(this.SHADER_PROGRAM, shader_fragment);
-        GL.linkProgram(this.SHADER_PROGRAM);
-
-        this._position = GL.getAttribLocation(this.SHADER_PROGRAM, "position");
-        GL.enableVertexAttribArray(this._position);
-
         //Uniform
-        this._PMatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "PMatrix");
-        this._VMatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "VMatrix");
-        this._MMatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "MMatrix");
+        this._PMatrix = GL.getUniformLocation(shader_program, "PMatrix");
+        this._VMatrix = GL.getUniformLocation(shader_program, "VMatrix");
+        this._MMatrix = GL.getUniformLocation(shader_program, "MMatrix");
+        this._position = GL.getAttribLocation(shader_program, "position");
 
         this.TRIANGLE_VERTEX = GL.createBuffer();
         this.TRIANGLE_FACES = GL.createBuffer();
@@ -59,10 +40,14 @@ class BaseObject{
         GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,
             new Uint16Array(this.faces),
             GL.STATIC_DRAW);
+
+        this.childs.forEach(child => {
+            child.setup();
+        });
     }
 
     render_setup(VIEW_MATRIX, PROJECTION_MATRIX){
-        GL.useProgram(this.SHADER_PROGRAM);
+        GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
 
@@ -71,12 +56,15 @@ class BaseObject{
         GL.uniformMatrix4fv(this._MMatrix, false, this.MODEL_MATRIX);
     }
 
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
+    render(VIEW_MATRIX, PROJECTION_MATRIX) {
         this.render_setup(VIEW_MATRIX, PROJECTION_MATRIX);
 
         GL.drawElements(GL.TRIANGLES, this.faces.length, GL.UNSIGNED_SHORT, 0);
 
-        GL.flush();
+        this.childs.forEach(child => {
+            child.MODEL_MATRIX = this.MODEL_MATRIX;
+            child.render(VIEW_MATRIX, PROJECTION_MATRIX);
+        });
     }
 
     renderMesh(VIEW_MATRIX, PROJECTION_MATRIX) {
@@ -84,7 +72,10 @@ class BaseObject{
 
         GL.drawElements(GL.LINE_LOOP, this.faces.length, GL.UNSIGNED_SHORT, 0);
 
-        GL.flush();
+        this.childs.forEach(child => {
+            child.MODEL_MATRIX = this.MODEL_MATRIX;
+            child.renderMesh(VIEW_MATRIX, PROJECTION_MATRIX);
+        });
     }
 
     renderPoint(VIEW_MATRIX, PROJECTION_MATRIX) {
@@ -92,7 +83,10 @@ class BaseObject{
 
         GL.drawArrays(GL.POINTS, 0, this.vertex.length/6);
 
-        GL.flush();
+        this.childs.forEach(child => {
+            child.MODEL_MATRIX = this.MODEL_MATRIX;
+            child.renderPoint(VIEW_MATRIX, PROJECTION_MATRIX);
+        });
     }
 }
 
@@ -100,15 +94,15 @@ class TexturedObject extends BaseObject{
     _uv = null;
     _sampler = null;
 
-    constructor(vertex, faces, shader_vertex_source, shader_fragment_source) {
-        super(vertex, faces, shader_vertex_source, shader_fragment_source);
+    constructor(vertex, faces, shader_program) {
+        super(vertex, faces, shader_program);
 
-        this._sampler = GL.getUniformLocation(this.SHADER_PROGRAM, "sampler");
-        this._uv = GL.getAttribLocation(this.SHADER_PROGRAM, "uv");
+        this._sampler = GL.getUniformLocation(shader_program, "sampler");
+        this._uv = GL.getAttribLocation(shader_program, "uv");
 
         GL.enableVertexAttribArray(this._uv);
-        GL.useProgram(this.SHADER_PROGRAM);
-        GL.uniform1i(this._sampler, 0);
+        // GL.useProgram(shader_program);
+        // GL.uniform1i(this._sampler, 0);
     }
 
     render_setup(VIEW_MATRIX, PROJECTION_MATRIX){
@@ -126,10 +120,10 @@ class ColoredObject extends BaseObject{
     _color = null;
     _greyScality = null;
 
-    constructor(vertex, faces, shader_vertex_source, shader_fragment_source, red, green, blue, grayScale) {
+    constructor(vertex, faces, shader_program, red, green, blue, grayScale) {
         super(vertex, faces, shader_vertex_source, shader_fragment_source);
-        this._color = GL.getUniformLocation(this.SHADER_PROGRAM, "vColor");
-        this._greyScality = GL.getUniformLocation(this.SHADER_PROGRAM, "greyScality");
+        this._color = GL.getUniformLocation(shader_program, "vColor");
+        this._greyScality = GL.getUniformLocation(shader_program, "greyScality");
 
         this.r = red;
         this.g = green;
@@ -148,10 +142,10 @@ class ColoredObject extends BaseObject{
 class VertexColoredObject extends BaseObject{
     _color = null;
 
-    constructor(vertex, faces, shader_vertex_source, shader_fragment_source) {
-        super(vertex, faces, shader_vertex_source, shader_fragment_source);
+    constructor(vertex, faces, shader_program) {
+        super(vertex, faces, shader_program);
 
-        this._color = GL.getAttribLocation(this.SHADER_PROGRAM, "color");
+        this._color = GL.getAttribLocation(shader_program, "color");
         GL.enableVertexAttribArray(this._color);
     }
 

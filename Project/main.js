@@ -1,5 +1,8 @@
 /** @type {WebGLRenderingContext} */
-var GL;
+
+// import {Spongebob} from "./object/character/spongebob.js";
+// import {Skybox} from "./object/terrain/skybox.js";
+import {TexturedObject} from "./object/obj.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -15,30 +18,42 @@ function main() {
     var dY = 0;
 
     var mX = 0;
-    var mY = -3;
-    var mZ = 0;
+    var mY = -30;
+    var mZ = -30;
 
     var nX = 0;
     var nY = 0;
     var nZ = 0;
 
     var THETA = 0;
-    var ALPHA = 0;
-    var SPEED = 1;
+    var ALPHA = Math.PI/4;
+    var SPEED = 0.5;
 
     function loadRotation() {
         // Update THETA and ALPHA from localStorage
         const savedTheta = localStorage.getItem("thetaValue") ?? "0";
-        const savedAlpha = localStorage.getItem("alphaValue") ?? "0";
+        const savedAlpha = localStorage.getItem("alphaValue") ?? "0.785";
 
         THETA = Number.parseFloat(savedTheta);
         ALPHA = Number.parseFloat(savedAlpha);
 
+
+        const savedX = localStorage.getItem("xValue") ?? "0";
+        const savedY = localStorage.getItem("yValue") ?? "-30";
+        const savedZ = localStorage.getItem("zValue") ?? "-30";
+
+        mX = Number.parseFloat(savedX);
+        mY = Number.parseFloat(savedY);
+        mZ = Number.parseFloat(savedZ)
     }
 
     function saveRotation() {
         localStorage.setItem("thetaValue", THETA.toString());
         localStorage.setItem("alphaValue", ALPHA.toString());
+
+        localStorage.setItem("xValue", mX.toString());
+        localStorage.setItem("yValue", mY.toString());
+        localStorage.setItem("zValue", mZ.toString());
     }
 
     var FRICTION = 0.8;
@@ -93,14 +108,19 @@ function main() {
         }
         else if (e.key === 'q') {
             A += Math.PI/2;
+            SPEED /= 2;
         }
         else if (e.key === 'e') {
             A -= Math.PI/2;
+            SPEED /= 2;
         }
-        else if (e.key = 'f'){
+        else if (e.key === 'f'){
             mX = 0;
-            mY = -3;
-            mZ = 0;
+            mY = -30;
+            mZ = -30;
+            THETA = 0;
+            ALPHA = Math.PI/4;
+            SPEED = 0;
         }
         else {
             return;
@@ -112,9 +132,11 @@ function main() {
         nZ += SPEED * Math.cos(A) * Math.cos(T);
         nY += SPEED * Math.sin(A);
 
-        mX += nX;
-        mY += nY;
-        mZ += nZ;
+        // mX += nX;
+        // mY += nY;
+        // mZ += nZ;
+
+        SPEED = 0.5;
     }
 
     CANVAS.addEventListener("mousedown", mouseDown, false);
@@ -130,75 +152,32 @@ function main() {
         return false;
     }
 
-
-    //shader
-    var shader_vertex_source = `
-      attribute vec3 position;
-      attribute vec2 uv;
-      attribute vec3 color;
-      
-      varying vec2 vUV;
-
-      uniform mat4 PMatrix, VMatrix, MMatrix;
-     
-      varying vec3 vColor;
-      void main(void) {
-          gl_Position = PMatrix * VMatrix * MMatrix * vec4(position, 1.);
-          vUV = uv;
-          vColor = color;
-          gl_PointSize=5.0;
-      }`;
-
-    var shader_fragment_source = `
-      precision mediump float;
-      
-      uniform vec3 vColor;
-      uniform float greyScality;
-
-      void main(void) {
-          float greyScaleValue = (vColor.r + vColor.g + vColor.b)/3.;
-          vec3 greyScaleColor = vec3(greyScaleValue, greyScaleValue, greyScaleValue);
-          vec3 color = mix(greyScaleColor, vColor, greyScality);
-          gl_FragColor = vec4(color, 1.);
-      }`;
-
-    var shader_fragment_source_texture = `
-      precision mediump float;
-      
-      uniform sampler2D sampler;
-      varying vec2 vUV;
-
-      void main(void) {
-          gl_FragColor = texture2D(sampler, vUV);
-      }`;
-
-    var shader_fragment_source_vertex = `
-      precision mediump float;
-      varying vec3 vColor;
-
-      void main(void) {
-      gl_FragColor = vec4(vColor, 1.);
-      }`;
+    Texture = TEXTURE.createTexture();
+    var Shader = SHADER.createShader();
 
     //matrix
-    var PROJECTION_MATRIX = LIBS.get_projection(45, CANVAS.width / CANVAS.height, 1, 10000);
+    var PROJECTION_MATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 0.1, 1000);
     var VIEW_MATRIX = LIBS.get_I4();
     var MODEL_MATRIX = LIBS.get_I4();
 
-    var object = new Spongebob(shader_vertex_source, shader_fragment_source_vertex);
-    var land = new Skybox(shader_vertex_source, shader_fragment_source_texture);
+    GL.useProgram(Shader.TEXTURE);
+
+    // var object = new Spongebob(shader_vertex_source, shader_fragment_source_vertex);
+    // var land = new Skybox(shader_vertex_source, shader_fragment_source_texture);
+    var vertex = QUADRIC.cuboid.createVertex({vT: true});
+    var faces = QUADRIC.cuboid.createFaces(0);
+    var obj = new TexturedObject(vertex, faces, Shader.TEXTURE);
 
     var objects = [
-        object,
-        land
+        // object,
+        // land
+        obj
     ];
 
-    var texture = TEXTURE.createTexture();
 
     for (let i = 0; i < objects.length; i++) {
         objects[i].setup();
     }
-
     /*========================= DRAWING ========================= */
     GL.clearColor(0.5, 0.5, 0.5, 0.0);
 
@@ -206,17 +185,16 @@ function main() {
     GL.depthFunc(GL.LEQUAL);
 
     var time_prev = 0;
+
     var animate = function (time) {
         GL.viewport(0, 0, CANVAS.width, CANVAS.height);
-        GL.clear(GL.COLOR_BUFFER_BIT | GL.D_BUFFER_BIT);
+        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
         var dt = time - time_prev;
         time_prev = time;
-
 
         if (!drag) {
             dX *= FRICTION;
             dY *= FRICTION;
-
 
             THETA += dX * 2 * Math.PI / CANVAS.width;
             ALPHA += dY * 2 * Math.PI / CANVAS.height;
@@ -231,28 +209,7 @@ function main() {
         mY += nY;
         mZ += nZ;
 
-
-        // var radius = 0;
-        // var pos_x = radius * Math.cos(ALPHA) * Math.sin(THETA);
-        // var pos_y = radius * Math.sin(ALPHA);
-        // var pos_z = radius * Math.cos(ALPHA) * Math.cos(THETA);
-
-        xDir = -THETA;
-        yDir = -ALPHA;
-
-        // object.MODEL_MATRIX = LIBS.get_I4();
-        // LIBS.rotateY(object.MODEL_MATRIX, THETA);
-        // LIBS.rotateX(object.MODEL_MATRIX, ALPHA);
-        // LIBS.setPosition(MODEL_MATRIX,pos_x,pos_y,pos_z);
-
         VIEW_MATRIX = LIBS.get_I4();
-        // LIBS.translateZ(VIEW_MATRIX, -20);
-
-        // console.log(2*Math.PI)
-        // console.log(THETA, ALPHA)
-        // VIEW_MATRIX = CAMERA.inverse(CAMERA.lookAt([mX, mY, mZ],[mX + xDir, mY + yDir, mZ + 1],[mX, mY+1, mZ]));
-        // VIEW_MATRIX = CAMERA.lookAt([mX, mY, mZ],[mX + xDir, mY + yDir, mZ + 1],[mX, mY+1, mZ]);
-        // console.log(ALPHA, THETA)
 
         var temp = LIBS.get_I4();
         LIBS.translate(temp, mX, mY, mZ);
@@ -266,11 +223,12 @@ function main() {
         LIBS.rotateX(temp, ALPHA);
         VIEW_MATRIX = LIBS.multiply(VIEW_MATRIX, temp);
 
+        // LIBS.rotateY(object.MODEL_MATRIX, THETA);
+        // LIBS.rotateX(object.MODEL_MATRIX, ALPHA);
+        // LIBS.setPosition(MODEL_MATRIX,pos_x,pos_y,pos_z);
 
-        GL.activeTexture(GL.TEXTURE0);
-        GL.bindTexture(GL.TEXTURE_2D, texture[0]);
-        // GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.REPEAT);
-        // GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.REPEAT);
+        GL.useProgram(Shader.TEXTURE);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[1]);
 
         for (let i = 0; i < objects.length; i++) {
             objects[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -280,12 +238,11 @@ function main() {
     };
 
 
-    // loadRotation();
+    loadRotation();
     animate(0);
 
-    // window.addEventListener("beforeunload", loadRotation);
+    window.addEventListener("beforeunload", loadRotation);
     setInterval(saveRotation, 1000);
 }
 
 window.addEventListener('load', main);
-//petra.id/codegrafkom
