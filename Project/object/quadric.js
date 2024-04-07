@@ -13,7 +13,22 @@ function normalize(x, y, z){
 
 var QUADRIC = {
     ellipsoid: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC, vT) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var intensity = 30;
@@ -28,11 +43,9 @@ var QUADRIC = {
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI, v/Math.PI]));
-                        // vertex.push(x, y, z);
+                        vertex.push(...clamp([-u/Math.PI, v/Math.PI*2]));
                     }
                 }
             }
@@ -60,7 +73,22 @@ var QUADRIC = {
         }
     },
     hyperboloid: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var intensity = 30;
@@ -78,7 +106,9 @@ var QUADRIC = {
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...clamp([-u/Math.PI, v * 2.13/Math.PI]));
                     }
                 }
             }
@@ -104,7 +134,22 @@ var QUADRIC = {
         }
     },
     hyperboloid_2: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x,o_y,o_z];
             var intensity = 30;
@@ -123,7 +168,9 @@ var QUADRIC = {
 
                         if (vC){
                             vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                            // vertex.push(x, y, z);
+                        }
+                        if (vT){
+                            vertex.push(...clamp([-u*2/Math.PI, -v*2/Math.PI]));
                         }
                     }
                 }
@@ -154,7 +201,22 @@ var QUADRIC = {
         }
     },
     elliptic_cone: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var intensity = 30;
@@ -163,14 +225,16 @@ var QUADRIC = {
             for(let u= -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for(let v= -v_size; v <= v_size; v += 1){
                     var x = o_x + (s_x * 0.5 * v * Math.cos(u)); //X
-                    var y = o_y + (s_y * 0.5 * v); //Z
+                    var y = o_y + (-s_y * 0.5 * v); //Z
                     var z = o_z + (s_z * 0.5 * v * Math.sin(u)); //Y
 
                     vertex.push(x, y, z);
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...clamp([-u/Math.PI, -v/2]));
                     }
                 }
             }
@@ -198,7 +262,22 @@ var QUADRIC = {
         }
     },
     elliptic_paraboloid: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x,o_y,o_z];
             var intensity = 30;
@@ -214,7 +293,9 @@ var QUADRIC = {
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...clamp([-u/Math.PI]),-v/10);
                     }
                 }
             }
@@ -243,7 +324,22 @@ var QUADRIC = {
         }
     },
     hyperboloid_paraboloid: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var intensity = 30;
@@ -261,7 +357,9 @@ var QUADRIC = {
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...clamp([u/Math.PI, -(v - 5)/5]));
                     }
                 }
             }
@@ -318,7 +416,23 @@ var QUADRIC = {
         }
     },
     donut: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, volume, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = [],
+            volume = 0.5
+        ) {
             var vertex = [];
             var central = [o_x,o_y,o_z];
             var intensity = 30;
@@ -336,6 +450,9 @@ var QUADRIC = {
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                         // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...clamp([-u/Math.PI, v/Math.PI]));
                     }
                 }
             }
@@ -363,7 +480,22 @@ var QUADRIC = {
         }
     },
     stair: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var intensity = 30;
@@ -378,7 +510,9 @@ var QUADRIC = {
 
                     if (vC){
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        // vertex.push(x, y, z);
+                    }
+                    if (vT){
+                        vertex.push(...[-u, v/Math.PI*0.5]);
                     }
                 }
             }
@@ -404,7 +538,22 @@ var QUADRIC = {
         }
     },
     cuboid: {
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, vC, vT) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
             var vertex = [];
             var central = [o_x,o_y,o_z];
             for (let i = -1; i <= 1; i+=2) {
@@ -443,8 +592,84 @@ var QUADRIC = {
             return faces;
         }
     },
+    saddle: {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
+            var vertex = [];
+            var central = [o_x,o_y,o_z];
+            var size = 30;
+            var increment = 1;
+            for(let u= -size/2; u <= size/2; u += increment) {
+                for(let v= -size/2; v <= size/2; v += increment){
+                    var x = o_x + (s_x * 0.065 * u); //X
+                    var y = o_y + (s_y * 0.0045 * (Math.pow(u,2)-Math.pow(v,2))); //Z
+                    var z = o_z + (s_z * 0.065 * v); //Y
+
+                    vertex.push(x, y, z);
+
+                    if (vC){
+                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                    }
+                    if (vT){
+                        vertex.push(...clamp([u/15, -v/15]));
+                    }
+                }
+            }
+            return vertex;
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            var size = 30;
+            size++;
+            for (let i = 0; i < size - 1; i++) {
+                for (let j = 0; j < size - 1; j++) {
+                    faces.push(
+                        offset + i * size + j,
+                        offset + (i + 1) * size + j,
+                        offset + (i+1) * size + j + 1
+                    );
+                    faces.push(
+                        offset + i * size + j,
+                        offset + i * size + j + 1,
+                        offset + (i+1) * size + j + 1
+                    );
+                }
+            }
+            return faces;
+        }
+    },
     height_saddle:{
-        createVertex: function (o_x, o_y, o_z, s_x, s_y, s_z, height, vC) {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = [],
+            height = 1
+        ) {
             var vertex = [];
             var central = [o_x, o_y, o_z];
             var size = 30;
@@ -461,7 +686,9 @@ var QUADRIC = {
 
                         if (vC){
                             vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                            // vertex.push(x, y, z);
+                        }
+                        if (vT){
+                            vertex.push(...clamp([u/15, -v/15]));
                         }
                     }
                 }
@@ -501,6 +728,63 @@ var QUADRIC = {
 
                 faces.push((i+1) * size - 1, (i+2) * size + size2 - 1, (i+2) * size - 1);
                 faces.push((i+1) * size - 1, (i+1) * size + size2 - 1, (i+2) * size + size2 - 1);
+            }
+            return faces;
+        }
+    },
+    cylinder: {
+        createVertex: function (
+            {
+                vC = false,
+                vT = false
+            } = {},
+            [
+                o_x = 0,
+                o_y = 0,
+                o_z = 0
+            ] = [],
+            [
+                s_x = 1,
+                s_y = 1,
+                s_z = 1
+            ] = []
+        ) {
+            var vertex = [];
+            var central = [o_x, o_y, o_z];
+            var intensity = 30;
+            var increment = Math.PI / intensity;
+            for (let u = -Math.PI; u <= Math.PI + 0.1; u += increment) {
+                for (let v = -1; v <= 1; v += 2) {
+                    var x = o_x + (s_x * Math.cos(u)); //X
+                    var y = o_y + (s_y * v); //Z
+                    var z = o_z + (s_z * Math.sin(u)); //Y
+
+                    vertex.push(x, y, z);
+
+                    if (vC){
+                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                    }
+                    if (vT){
+                        vertex.push(...clamp([-u/Math.PI, v]));
+                    }
+                }
+            }
+            return vertex;
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            var intensity = 30;
+            intensity = intensity * 2;
+            for (let i = 0; i < intensity; i++) {
+                faces.push(
+                    offset + i * 2 + 0,
+                    offset + i * 2 + 1,
+                    offset + (i+1) * 2 + 1,
+
+                    offset + i * 2 + 0,
+                    offset + (i+1) * 2,
+                    offset + (i+1) * 2 + 1
+                );
             }
             return faces;
         }
