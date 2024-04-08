@@ -5,6 +5,7 @@ var TEXTURE = {
             "grid",
             "sand",
             "test",
+            "cubemap",
         ];
         var textures = [];
         for (const name of src) {

@@ -14,14 +14,17 @@ function normalize(x, y, z){
 var PLANE = {
     rectangle:{
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
-            [x = 0, y = 1, z = 2] = [],
-            repeat = 1
+            [x = 0, y = 1, z = 2] = []
         ) {
             var vertex = [];
             var central = [o_x,o_y,o_z];
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+
             for(let u= -1; u <= 1; u += 2) {
                 for(let v= -1; v <= 1; v += 2){
 
@@ -39,7 +42,11 @@ var PLANE = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...(clamp([u, -v])).map(x => x * repeat))
+                        var t_p = clamp([u, -v]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -55,22 +62,27 @@ var PLANE = {
     },
     circle:{
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
         ) {
             var vertex = [o_x,o_y,o_z];
             var central = [o_x,o_y,o_z];
+            var step = Math.PI/30;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+
             if (vC){
                 vertex.push(o_x,o_y,o_z);
             }
             if (vT){
-                vertex.push(0.5, 0.5);
+                vertex.push(
+                    0.5 * t_d[0] + t_s[0],
+                    0.5 * t_d[1] + t_s[1]
+                );
             }
-
-            var step = Math.PI/30;
-
 
             for(let u= 0; u < Math.PI * 2; u += step) {
                 var pos = [
@@ -89,7 +101,11 @@ var PLANE = {
                     vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                 }
                 if (vT){
-                    vertex.push(...clamp([Math.cos(u), -Math.sin(u)]));
+                    var t_p = clamp([Math.cos(u), -Math.sin(u)]);
+                    vertex.push(
+                        t_p[0] * t_d[0] + t_s[0],
+                        t_p[1] * t_d[1] + t_s[1]
+                    );
                 }
             }
             return vertex;

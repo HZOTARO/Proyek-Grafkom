@@ -14,61 +14,116 @@ function normalize(x, y, z){
 var QUADRIC = {
     cuboid: {
         createVertex: function (
-            {
-                vC = false,
-                vT = false
-            } = {},
-            [
-                o_x = 0,
-                o_y = 0,
-                o_z = 0
-            ] = [],
-            [
-                s_x = 1,
-                s_y = 1,
-                s_z = 1
-            ] = []
+            {vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
+            [o_x = 0, o_y = 0, o_z = 0] = [],
+            [s_x = 1, s_y = 1, s_z = 1] = []
         ) {
-            var vertex = [];
-            var central = [o_x,o_y,o_z];
-            for (let i = -1; i <= 1; i+=2) {
-                for (let j = -1; j <= 1; j+=2) {
-                    for (let k = -1; k <= 1; k+=2) {
-                        var x = o_x + (s_x * k);
-                        var y = o_y + (s_y * i);
-                        var z = o_z + (s_z * j);
 
-                        vertex.push(x,y,z);
+            var central = [o_x, o_y, o_z];
 
-                        if (vC){
-                            vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
-                        }
-                        if (vT){
-                            vertex.push(...clamp([k,i]));
-                        }
-                    }
-                }
+            var pos = [
+                s_x + o_x,
+                s_y + o_y,
+                s_z + o_z
+            ];
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+            var texture = {
+                x: [0, 0.25, 0.5, 0.75, 1].map(x => x * t_d[0] + t_s[0]),
+                y: [0, 1/3, 2/3, 1].map(x => x * t_d[1] + t_s[1])
             }
-            return vertex;
+
+            if (vT){
+                return[
+                    //Top
+                    -pos[0], pos[1], -pos[2], texture.x[1], texture.y[3],
+                     pos[0], pos[1], -pos[2], texture.x[2], texture.y[3],
+                    -pos[0], pos[1],  pos[2], texture.x[1], texture.y[2],
+                     pos[0], pos[1],  pos[2], texture.x[2], texture.y[2],
+
+                    //Bottom
+                    -pos[0], -pos[1],  pos[2], texture.x[1], texture.y[1],
+                     pos[0], -pos[1],  pos[2], texture.x[2], texture.y[1],
+                    -pos[0], -pos[1], -pos[2], texture.x[1], texture.y[0],
+                     pos[0], -pos[1], -pos[2], texture.x[2], texture.y[0],
+
+                    //Left
+                    -pos[0],  pos[1], -pos[2], texture.x[0], texture.y[2],
+                    -pos[0],  pos[1],  pos[2], texture.x[1], texture.y[2],
+                    -pos[0], -pos[1], -pos[2], texture.x[0], texture.y[1],
+                    -pos[0], -pos[1],  pos[2], texture.x[1], texture.y[1],
+
+                    //Front
+                    -pos[0],  pos[1], pos[2], texture.x[1], texture.y[2],
+                     pos[0],  pos[1], pos[2], texture.x[2], texture.y[2],
+                    -pos[0], -pos[1], pos[2], texture.x[1], texture.y[1],
+                     pos[0], -pos[1], pos[2], texture.x[2], texture.y[1],
+
+                    //Right
+                    pos[0],  pos[1],  pos[2], texture.x[2], texture.y[2],
+                    pos[0],  pos[1], -pos[2], texture.x[3], texture.y[2],
+                    pos[0], -pos[1],  pos[2], texture.x[2], texture.y[1],
+                    pos[0], -pos[1], -pos[2], texture.x[3], texture.y[1],
+
+                    //Back
+                    -pos[0],  pos[1], -pos[2], texture.x[3], texture.y[2],
+                     pos[0],  pos[1], -pos[2], texture.x[4], texture.y[2],
+                    -pos[0], -pos[1], -pos[2], texture.x[3], texture.y[1],
+                     pos[0], -pos[1], -pos[2], texture.x[4], texture.y[1],
+                ]
+            }
+            else return [
+                //Top
+                -pos[0], pos[1], -pos[2],
+                pos[0], pos[1], -pos[2],
+                -pos[0], pos[1], pos[2],
+                pos[0], pos[1], pos[2],
+
+                //Bottom
+                -pos[0], -pos[1], pos[2],
+                pos[0], -pos[1], pos[2],
+                -pos[0], -pos[1], -pos[2],
+                pos[0], -pos[1], -pos[2],
+
+                //Left
+                -pos[0], pos[1], -pos[2],
+                -pos[0], pos[1], pos[2],
+                -pos[0], -pos[1], -pos[2],
+                -pos[0], -pos[1], pos[2],
+
+                //Front
+                -pos[0], pos[1], pos[2],
+                pos[0], pos[1], pos[2],
+                -pos[0], -pos[1], pos[2],
+                pos[0], -pos[1], pos[2],
+
+                //Right
+                pos[0], pos[1], pos[2],
+                pos[0], pos[1], -pos[2],
+                pos[0], -pos[1], pos[2],
+                pos[0], -pos[1], -pos[2],
+
+                //Back
+                -pos[0], pos[1], -pos[2],
+                pos[0], pos[1], -pos[2],
+                -pos[0], -pos[1], -pos[2],
+                pos[0], -pos[1], -pos[2],
+            ];
         },
         createFaces: function (offset) {
             var faces = [];
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 6; i++) {
                 faces.push(offset + i * 4, offset + i * 4 + 1, offset + i * 4 + 2);
-                faces.push(offset + i * 4 + 3, offset + i * 4 + 1, offset + i * 4 + 2);
-
-                faces.push(offset + i * 2, offset + 4 + i * 2, offset + i * 2 + 1);
-                faces.push(offset + 4 + i * 2 + 1, offset + 4 + i * 2, offset + i * 2 + 1);
-
-                faces.push(offset + i, offset + i + 2, offset + i + 4);
-                faces.push(offset + 6 + i, offset + i + 2, offset + i + 4);
+                faces.push(offset + i * 4 + 1, offset + i * 4 + 2, offset + i * 4 + 3);
             }
             return faces;
         }
     },
     ellipsoid: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -82,6 +137,8 @@ var QUADRIC = {
 
             var u_rotate = Math.PI/2 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for (let u = -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for (let v = -Math.PI / 2; v <= Math.PI / 2 + 0.1; v += increment) {
@@ -104,7 +161,11 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI, v/Math.PI*2]));
+                        var t_p = clamp([-u/Math.PI, v/Math.PI*2]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -133,7 +194,8 @@ var QUADRIC = {
     },
     elliptic_cone: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -148,6 +210,8 @@ var QUADRIC = {
 
             var u_rotate = -Math.PI/2 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for(let u= -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for(let v= -v_size; v <= v_size; v += 1){
@@ -171,7 +235,11 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI, -v/2]));
+                        var t_p = clamp([-u/Math.PI, -v/2]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -200,7 +268,8 @@ var QUADRIC = {
     },
     elliptic_paraboloid: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -215,6 +284,8 @@ var QUADRIC = {
 
             var u_rotate = Math.PI/2 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for(let u= -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for(let v= 0; v <= v_size; v += 1){
@@ -237,7 +308,12 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI]),-v/10);
+                        var t_p = [...clamp([-u/Math.PI]), 1 - v/10];
+                        console.log(t_p)
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -267,7 +343,8 @@ var QUADRIC = {
     },
     donut: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -284,6 +361,8 @@ var QUADRIC = {
 
             var u_rotate = Math.PI/2 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for(let u= -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for(let v= -Math.PI; v <= Math.PI + 0.1; v += increment){
@@ -306,7 +385,11 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI, v/Math.PI]));
+                        var t_p = clamp([-u/Math.PI, v/Math.PI]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -335,7 +418,8 @@ var QUADRIC = {
     },
     saddle: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -349,6 +433,8 @@ var QUADRIC = {
 
             var u_rotate = 0 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for(let u= -size/2; u <= size/2; u += increment) {
                 for(let v= -size/2; v <= size/2; v += increment){
@@ -371,7 +457,11 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([u/15, -v/15]));
+                        var t_p = clamp([u/15, -v/15]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
@@ -400,7 +490,8 @@ var QUADRIC = {
     },
     height_saddle:{
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -415,6 +506,8 @@ var QUADRIC = {
 
             var u_rotate = 0 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for (let i = 0; i <= 1; i++) {
                 for(let u= -size/2; u <= size/2; u += increment) {
@@ -438,7 +531,11 @@ var QUADRIC = {
                             vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                         }
                         if (vT){
-                            vertex.push(...clamp([u/15, -v/15]));
+                            var t_p = clamp([u/15, -v/15]);
+                            vertex.push(
+                                t_p[0] * t_d[0] + t_s[0],
+                                t_p[1] * t_d[1] + t_s[1]
+                            );
                         }
                     }
                 }
@@ -484,7 +581,8 @@ var QUADRIC = {
     },
     cylinder: {
         createVertex: function (
-            {vC = false, vT = false} = {},
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
             [o_x = 0, o_y = 0, o_z = 0] = [],
             [s_x = 1, s_y = 1, s_z = 1] = [],
             [x = 0, y = 1, z = 2] = [],
@@ -498,6 +596,8 @@ var QUADRIC = {
 
             var u_rotate = Math.PI/2 + o_u;
             var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
             for (let u = -Math.PI; u <= Math.PI + 0.1; u += increment) {
                 for (let v = -1; v <= 1; v += 2) {
@@ -520,7 +620,11 @@ var QUADRIC = {
                         vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
                     }
                     if (vT){
-                        vertex.push(...clamp([-u/Math.PI, v]));
+                        var t_p = clamp([-u/Math.PI, v]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
                     }
                 }
             }
