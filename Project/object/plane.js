@@ -21,7 +21,6 @@ var PLANE = {
             [x = 0, y = 1, z = 2] = []
         ) {
             var vertex = [];
-            var central = [o_x,o_y,o_z];
 
             var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
@@ -39,7 +38,7 @@ var PLANE = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([u, -v]);
@@ -69,7 +68,6 @@ var PLANE = {
             [x = 0, y = 1, z = 2] = [],
         ) {
             var vertex = [o_x,o_y,o_z];
-            var central = [o_x,o_y,o_z];
             var step = Math.PI/30;
 
             var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
@@ -98,7 +96,7 @@ var PLANE = {
                 );
 
                 if (vC){
-                    vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                    vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                 }
                 if (vT){
                     var t_p = clamp([pos[0], -pos[2]]);

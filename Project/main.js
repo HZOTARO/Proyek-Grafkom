@@ -1,6 +1,6 @@
 /** @type {WebGLRenderingContext} */
 
-// import {Spongebob} from "./object/character/spongebob.js";
+import {Spongebob} from "./object/character/spongebob.js";
 import {Skybox} from "./object/terrain/skybox.js";
 import {TexturedObject} from "./object/object.js";
 
@@ -175,16 +175,16 @@ function main() {
     Texture = TEXTURE.createTexture();
 
     //matrix
-    var PROJECTION_MATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 0.1, 1000);
+    var PROJECTION_MATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 1, 1000);
     var VIEW_MATRIX = LIBS.get_I4();
     var MODEL_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    // var spongebob = new Spongebob(Shader.VERTEX_COLOR);
+    var spongebob = new Spongebob(Shader.VERTEX_COLOR);
     var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
-        // spongebob,
+        spongebob
     ];
 
     var test_plane = [

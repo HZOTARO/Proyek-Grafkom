@@ -12,6 +12,8 @@ class BaseObject{
     TRIANGLE_VERTEX = null;
     TRIANGLE_FACES = null;
 
+    LOCAL_MATRIX = LIBS.get_I4();
+    WORLD_MATRIX = LIBS.get_I4();
     MODEL_MATRIX = LIBS.get_I4();
 
     childs = [];
@@ -47,6 +49,11 @@ class BaseObject{
     }
 
     render_setup(VIEW_MATRIX, PROJECTION_MATRIX){
+        this.MODEL_MATRIX = LIBS.multiply(this.WORLD_MATRIX, this.LOCAL_MATRIX);
+        this.childs.forEach(child => {
+            child.WORLD_MATRIX = this.MODEL_MATRIX;
+        });
+
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
@@ -62,7 +69,6 @@ class BaseObject{
         GL.drawElements(GL.TRIANGLES, this.faces.length, GL.UNSIGNED_SHORT, 0);
 
         this.childs.forEach(child => {
-            child.MODEL_MATRIX = this.MODEL_MATRIX;
             child.render(VIEW_MATRIX, PROJECTION_MATRIX);
         });
     }
@@ -73,7 +79,6 @@ class BaseObject{
         GL.drawElements(GL.LINE_LOOP, this.faces.length, GL.UNSIGNED_SHORT, 0);
 
         this.childs.forEach(child => {
-            child.MODEL_MATRIX = this.MODEL_MATRIX;
             child.renderMesh(VIEW_MATRIX, PROJECTION_MATRIX);
         });
     }
@@ -84,7 +89,6 @@ class BaseObject{
         GL.drawArrays(GL.POINTS, 0, this.vertex.length/5);
 
         this.childs.forEach(child => {
-            child.MODEL_MATRIX = this.MODEL_MATRIX;
             child.renderPoint(VIEW_MATRIX, PROJECTION_MATRIX);
         });
     }

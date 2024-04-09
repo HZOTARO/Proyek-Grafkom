@@ -1,19 +1,130 @@
-class Spongebob{
-    shoe = null;
-    MODEL_MATRIX = LIBS.get_I4();
+import {VertexColoredObject} from "../object.js";
+export {Spongebob}
 
-    constructor(shader_vertex_source, shader_fragment_source) {
-        this.shoe = new Spongebob_Shoe(shader_vertex_source, shader_fragment_source);
-    }
+class Spongebob extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+        // this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/6));
+        // this.vertex.push(...QUADRIC.cuboid.createVertex(
+        //     {vC: true},
+        //     [0,0,0],
+        //     [1,1,1]
+        // ));
 
-    setup(){
-        this.shoe.setup();
+
+        this.childs = [
+            new Spongebob_shoe(shader_program)
+        ];
+
+        LIBS.translate(this.WORLD_MATRIX,0,5,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
-        this.shoe.MODEL_MATRIX = LIBS.get_I4();
-        this.shoe.MODEL_MATRIX = LIBS.multiply(this.shoe.MODEL_MATRIX, this.MODEL_MATRIX);
-        this.shoe.render(VIEW_MATRIX, PROJECTION_MATRIX);
+        // LIBS.rotateY(this.LOCAL_MATRIX, 0.1);
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_u_arm extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_l_arm extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_hand extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_finger extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_thigh extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_leg extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_shoe extends VertexColoredObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+        this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/6));
+        this.vertex.push(...QUADRIC.height_saddle.createVertex(
+            {vC: true},
+            [1.4,-0.1,0],
+            [1.1,0.3,0.9],
+            [],
+            [],
+            -4)
+        );
+
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vC: true},
+            [0,-0.2,0],
+            [1.5,1.2,1.3])
+        );
+
+        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/6));
+        this.vertex.push(...QUADRIC.donut.createVertex(
+            {vC: true},
+            [3,0.2,0],
+            [0.7,1,0.7],
+            [],
+            [],
+            0.7)
+        );
+
+        this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/6));
+        this.vertex.push(...QUADRIC.cuboid.createVertex(
+            {vC: true},
+            [3,-0.5,0],
+            [0.8,0.8,0.8]
+        ));
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 

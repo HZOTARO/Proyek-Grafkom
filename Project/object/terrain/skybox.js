@@ -23,7 +23,6 @@ class Skybox extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         GL.bindTexture(GL.TEXTURE_2D, Texture[1]);
-        this.MODEL_MATRIX = LIBS.get_I4();
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -46,7 +45,6 @@ class Ball extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         GL.bindTexture(GL.TEXTURE_2D, Texture[3]);
-        this.MODEL_MATRIX = LIBS.get_I4();
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }

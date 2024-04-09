@@ -12,114 +12,6 @@ function normalize(x, y, z){
 }
 
 var QUADRIC = {
-    cuboid: {
-        createVertex: function (
-            {vT = false,
-                t_s = [0, 0], t_e = [1, 1]} = {},
-            [o_x = 0, o_y = 0, o_z = 0] = [],
-            [s_x = 1, s_y = 1, s_z = 1] = []
-        ) {
-
-            var central = [o_x, o_y, o_z];
-
-            var pos = [
-                s_x + o_x,
-                s_y + o_y,
-                s_z + o_z
-            ];
-
-            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
-            var texture = {
-                x: [0, 0.25, 0.5, 0.75, 1].map(x => x * t_d[0] + t_s[0]),
-                y: [0, 1/3, 2/3, 1].map(x => x * t_d[1] + t_s[1])
-            }
-
-            if (vT){
-                return[
-                    //Top
-                    -pos[0], pos[1], -pos[2], texture.x[1], texture.y[3],
-                     pos[0], pos[1], -pos[2], texture.x[2], texture.y[3],
-                    -pos[0], pos[1],  pos[2], texture.x[1], texture.y[2],
-                     pos[0], pos[1],  pos[2], texture.x[2], texture.y[2],
-
-                    //Bottom
-                    -pos[0], -pos[1],  pos[2], texture.x[1], texture.y[1],
-                     pos[0], -pos[1],  pos[2], texture.x[2], texture.y[1],
-                    -pos[0], -pos[1], -pos[2], texture.x[1], texture.y[0],
-                     pos[0], -pos[1], -pos[2], texture.x[2], texture.y[0],
-
-                    //Left
-                    -pos[0],  pos[1], -pos[2], texture.x[0], texture.y[2],
-                    -pos[0],  pos[1],  pos[2], texture.x[1], texture.y[2],
-                    -pos[0], -pos[1], -pos[2], texture.x[0], texture.y[1],
-                    -pos[0], -pos[1],  pos[2], texture.x[1], texture.y[1],
-
-                    //Front
-                    -pos[0],  pos[1], pos[2], texture.x[1], texture.y[2],
-                     pos[0],  pos[1], pos[2], texture.x[2], texture.y[2],
-                    -pos[0], -pos[1], pos[2], texture.x[1], texture.y[1],
-                     pos[0], -pos[1], pos[2], texture.x[2], texture.y[1],
-
-                    //Right
-                    pos[0],  pos[1],  pos[2], texture.x[2], texture.y[2],
-                    pos[0],  pos[1], -pos[2], texture.x[3], texture.y[2],
-                    pos[0], -pos[1],  pos[2], texture.x[2], texture.y[1],
-                    pos[0], -pos[1], -pos[2], texture.x[3], texture.y[1],
-
-                    //Back
-                    -pos[0],  pos[1], -pos[2], texture.x[3], texture.y[2],
-                     pos[0],  pos[1], -pos[2], texture.x[4], texture.y[2],
-                    -pos[0], -pos[1], -pos[2], texture.x[3], texture.y[1],
-                     pos[0], -pos[1], -pos[2], texture.x[4], texture.y[1],
-                ]
-            }
-            else return [
-                //Top
-                -pos[0], pos[1], -pos[2],
-                pos[0], pos[1], -pos[2],
-                -pos[0], pos[1], pos[2],
-                pos[0], pos[1], pos[2],
-
-                //Bottom
-                -pos[0], -pos[1], pos[2],
-                pos[0], -pos[1], pos[2],
-                -pos[0], -pos[1], -pos[2],
-                pos[0], -pos[1], -pos[2],
-
-                //Left
-                -pos[0], pos[1], -pos[2],
-                -pos[0], pos[1], pos[2],
-                -pos[0], -pos[1], -pos[2],
-                -pos[0], -pos[1], pos[2],
-
-                //Front
-                -pos[0], pos[1], pos[2],
-                pos[0], pos[1], pos[2],
-                -pos[0], -pos[1], pos[2],
-                pos[0], -pos[1], pos[2],
-
-                //Right
-                pos[0], pos[1], pos[2],
-                pos[0], pos[1], -pos[2],
-                pos[0], -pos[1], pos[2],
-                pos[0], -pos[1], -pos[2],
-
-                //Back
-                -pos[0], pos[1], -pos[2],
-                pos[0], pos[1], -pos[2],
-                -pos[0], -pos[1], -pos[2],
-                pos[0], -pos[1], -pos[2],
-            ];
-        },
-        createFaces: function (offset) {
-            var faces = [];
-            for (let i = 0; i < 6; i++) {
-                faces.push(offset + i * 4, offset + i * 4 + 1, offset + i * 4 + 2);
-                faces.push(offset + i * 4 + 1, offset + i * 4 + 2, offset + i * 4 + 3);
-            }
-            return faces;
-        }
-    },
     ellipsoid: {
         createVertex: function (
             {vC = false, vT = false,
@@ -130,7 +22,6 @@ var QUADRIC = {
             [o_u = 0, o_v = 0] = [],
         ) {
             var vertex = [];
-            var central = [o_x, o_y, o_z];
 
             var intensity = 30;
             var increment = Math.PI / intensity;
@@ -158,7 +49,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v/Math.PI*2]);
@@ -202,7 +93,6 @@ var QUADRIC = {
             [o_u = 0, o_v = 0] = []
         ) {
             var vertex = [];
-            var central = [o_x, o_y, o_z];
 
             var intensity = 30;
             var increment = Math.PI / intensity;
@@ -232,7 +122,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, -v/2]);
@@ -276,7 +166,6 @@ var QUADRIC = {
             [o_u = 0, o_v = 0] = []
         ) {
             var vertex = [];
-            var central = [o_x,o_y,o_z];
 
             var intensity = 30;
             var increment = Math.PI / intensity;
@@ -305,7 +194,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = [...clamp([-u/Math.PI]), 1 - v/10];
@@ -352,7 +241,6 @@ var QUADRIC = {
             volume = 0.5
         ) {
             var vertex = [];
-            var central = [o_x,o_y,o_z];
 
             var intensity = 30;
             var increment = Math.PI / intensity;
@@ -382,7 +270,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v/Math.PI]);
@@ -426,7 +314,6 @@ var QUADRIC = {
             [o_u = 0, o_v = 0] = []
         ) {
             var vertex = [];
-            var central = [o_x,o_y,o_z];
 
             var size = 30;
             var increment = 1;
@@ -454,7 +341,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([u/15, -v/15]);
@@ -499,7 +386,6 @@ var QUADRIC = {
             height = 1
         ) {
             var vertex = [];
-            var central = [o_x, o_y, o_z];
 
             var size = 30;
             var increment = 1;
@@ -528,7 +414,7 @@ var QUADRIC = {
                         );
 
                         if (vC){
-                            vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                            vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                         }
                         if (vT){
                             var t_p = clamp([u/15, -v/15]);
@@ -669,7 +555,6 @@ var QUADRIC = {
             [o_u = 0, o_v = 0] = []
         ) {
             var vertex = [];
-            var central = [o_x, o_y, o_z];
 
             var intensity = 30;
             var increment = Math.PI / intensity;
@@ -697,7 +582,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        vertex.push(...clamp(normalize(pos[x], pos[y], pos[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v]);
@@ -727,5 +612,149 @@ var QUADRIC = {
             }
             return faces;
         }
-    }
+    },
+    cuboid: {
+        createVertex: function (
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
+            [o_x = 0, o_y = 0, o_z = 0] = [],
+            [s_x = 1, s_y = 1, s_z = 1] = []
+        ) {
+
+            var pos = [
+                o_x + s_x, o_y + s_y, o_z + s_z,
+                o_x - s_x, o_y - s_y, o_z - s_z,
+            ];
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+            var texture = {
+                x: [0, 0.25, 0.5, 0.75, 1].map(x => x * t_d[0] + t_s[0]),
+                y: [0, 1/3, 2/3, 1].map(x => x * t_d[1] + t_s[1])
+            }
+
+            if (vT){
+                return[
+                    //Top
+                    pos[3], pos[1], pos[5], texture.x[1], texture.y[3],
+                    pos[0], pos[1], pos[5], texture.x[2], texture.y[3],
+                    pos[3], pos[1], pos[2], texture.x[1], texture.y[2],
+                    pos[0], pos[1], pos[2], texture.x[2], texture.y[2],
+
+                    //Bottom
+                    pos[3], pos[4], pos[2], texture.x[1], texture.y[1],
+                    pos[0], pos[4], pos[2], texture.x[2], texture.y[1],
+                    pos[3], pos[4], pos[5], texture.x[1], texture.y[0],
+                    pos[0], pos[4], pos[5], texture.x[2], texture.y[0],
+
+                    //Left
+                    pos[3], pos[1], pos[5], texture.x[0], texture.y[2],
+                    pos[3], pos[1], pos[2], texture.x[1], texture.y[2],
+                    pos[3], pos[4], pos[5], texture.x[0], texture.y[1],
+                    pos[3], pos[4], pos[2], texture.x[1], texture.y[1],
+
+                    //Front
+                    pos[3], pos[1], pos[2], texture.x[1], texture.y[2],
+                    pos[0], pos[1], pos[2], texture.x[2], texture.y[2],
+                    pos[3], pos[4], pos[2], texture.x[1], texture.y[1],
+                    pos[0], pos[4], pos[2], texture.x[2], texture.y[1],
+
+                    //Right
+                    pos[0], pos[1], pos[2], texture.x[2], texture.y[2],
+                    pos[0], pos[1], pos[5], texture.x[3], texture.y[2],
+                    pos[0], pos[4], pos[2], texture.x[2], texture.y[1],
+                    pos[0], pos[4], pos[5], texture.x[3], texture.y[1],
+
+                    //Back
+                    pos[3], pos[1], pos[5], texture.x[3], texture.y[2],
+                    pos[0], pos[1], pos[5], texture.x[4], texture.y[2],
+                    pos[3], pos[4], pos[5], texture.x[3], texture.y[1],
+                    pos[0], pos[4], pos[5], texture.x[4], texture.y[1],
+                ]
+            }
+            else if (vC){
+                return [
+                    //Top
+                    pos[3], pos[1], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[0], pos[1], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[3], pos[1], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[2] - o_z)),
+                    pos[0], pos[1], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[2] - o_z)),
+
+                    //Bottom
+                    pos[3], pos[4], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[2] - o_z)),
+                    pos[0], pos[4], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[2] - o_z)),
+                    pos[3], pos[4], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[5] - o_z)),
+                    pos[0], pos[4], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[5] - o_z)),
+
+                    //Left
+                    pos[3], pos[1], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[3], pos[1], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[2] - o_z)),
+                    pos[3], pos[4], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[5] - o_z)),
+                    pos[3], pos[4], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[2] - o_z)),
+
+                    //Front
+                    pos[3], pos[1], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[2] - o_z)),
+                    pos[0], pos[1], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[2] - o_z)),
+                    pos[3], pos[4], pos[2],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[2] - o_z)),
+                    pos[0], pos[4], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[2] - o_z)),
+
+                    //Right
+                    pos[0], pos[1], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[2] - o_z)),
+                    pos[0], pos[1], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[0], pos[4], pos[2],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[2] - o_z)),
+                    pos[0], pos[4], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[5] - o_z)),
+
+                    //Back
+                    pos[3], pos[1], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[0], pos[1], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[1] - o_y, pos[5] - o_z)),
+                    pos[3], pos[4], pos[5],     ...clamp(normalize(pos[3] - o_x, pos[4] - o_y, pos[5] - o_z)),
+                    pos[0], pos[4], pos[5],     ...clamp(normalize(pos[0] - o_x, pos[4] - o_y, pos[5] - o_z)),
+                ]
+            }
+            else return [
+                    //Top
+                    pos[3], pos[1], pos[5],
+                    pos[0], pos[1], pos[5],
+                    pos[3], pos[1], pos[2],
+                    pos[0], pos[1], pos[2],
+
+                    //Bottom
+                    pos[3], pos[4], pos[2],
+                    pos[0], pos[4], pos[2],
+                    pos[3], pos[4], pos[5],
+                    pos[0], pos[4], pos[5],
+
+                    //Left
+                    pos[3], pos[1], pos[5],
+                    pos[3], pos[1], pos[2],
+                    pos[3], pos[4], pos[5],
+                    pos[3], pos[4], pos[2],
+
+                    //Front
+                    pos[3], pos[1], pos[2],
+                    pos[0], pos[1], pos[2],
+                    pos[3], pos[4], pos[2],
+                    pos[0], pos[4], pos[2],
+
+                    //Right
+                    pos[0], pos[1], pos[2],
+                    pos[0], pos[1], pos[5],
+                    pos[0], pos[4], pos[2],
+                    pos[0], pos[4], pos[5],
+
+                    //Back
+                    pos[3], pos[1], pos[5],
+                    pos[0], pos[1], pos[5],
+                    pos[3], pos[4], pos[5],
+                    pos[0], pos[4], pos[5],
+                ];
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            for (let i = 0; i < 6; i++) {
+                faces.push(offset + i * 4, offset + i * 4 + 1, offset + i * 4 + 2);
+                faces.push(offset + i * 4 + 1, offset + i * 4 + 2, offset + i * 4 + 3);
+            }
+            return faces;
+        }
+    },
 };
