@@ -158,7 +158,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v/Math.PI*2]);
@@ -232,7 +232,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, -v/2]);
@@ -305,7 +305,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = [...clamp([-u/Math.PI]), 1 - v/10];
@@ -382,7 +382,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v/Math.PI]);
@@ -454,7 +454,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([u/15, -v/15]);
@@ -528,7 +528,7 @@ var QUADRIC = {
                         );
 
                         if (vC){
-                            vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                            vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                         }
                         if (vT){
                             var t_p = clamp([u/15, -v/15]);
@@ -579,6 +579,86 @@ var QUADRIC = {
             return faces;
         }
     },
+    height_circle:{
+        createVertex: function (
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
+            [o_x = 0, o_y = 0, o_z = 0] = [],
+            [s_x = 1, s_y = 1, s_z = 1] = [],
+            [x = 0, y = 1, z = 2] = [],
+            volume = 0.5
+        ) {
+            var vertex = [];
+            var central = [o_x,o_y,o_z];
+            var step = Math.PI/30;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+
+            for(let u= 0; u < Math.PI * 2; u += step) {
+                for (let v = -1; v <= 1; v+=2) {
+                    var pos = [
+                        Math.cos(u),
+                        v,
+                        Math.sin(u)
+                    ];
+
+                    for (let w = 0; w <= 1; w++) {
+                        vertex.push(
+                            pos[x] * s_x + o_x,
+                            pos[y] * s_y + o_y,
+                            pos[z] * s_z + o_z
+                        );
+
+                        if (vC){
+                            vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                        }
+                        if (vT){
+                            var t_p = clamp([pos[0], -pos[2]]);
+                            vertex.push(
+                                t_p[0] * t_d[0] + t_s[0],
+                                t_p[1] * t_d[1] + t_s[1]
+                            );
+                        }
+
+                        pos[0] *= (1 - volume);
+                        pos[2] *= (1 - volume);
+                    }
+                }
+            }
+            return vertex;
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            var intensity = 30;
+            intensity *= 2;
+            for (let i = 0; i < intensity; i++) {
+                for (let j = 0; j <= 1; j++) {
+                    faces.push(
+                        offset + j * 2 + i * 4,
+                        offset + j * 2 + i * 4 + 1,
+                        offset + j * 2 + (i + 1) * 4
+                    );
+                    faces.push(
+                        offset + j * 2 + i * 4 + 1,
+                        offset + j * 2 + (i + 1) * 4 + 1,
+                        offset + j * 2 + (i + 1) * 4
+                    );
+
+                    faces.push(
+                        offset + j + i * 4,
+                        offset + j + (i + 1) * 4,
+                        offset + j + i * 4 + 2
+                    );
+                    faces.push(
+                        offset + j + i * 4 + 2,
+                        offset + j + (i + 1) * 4,
+                        offset + j + (i + 1) * 4 + 2
+                    );
+                }
+            }
+            return faces;
+        }
+    },
     cylinder: {
         createVertex: function (
             {vC = false, vT = false,
@@ -617,7 +697,7 @@ var QUADRIC = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([-u/Math.PI, v]);

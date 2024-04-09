@@ -39,7 +39,7 @@ var PLANE = {
                     );
 
                     if (vC){
-                        vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                     }
                     if (vT){
                         var t_p = clamp([u, -v]);
@@ -98,10 +98,10 @@ var PLANE = {
                 );
 
                 if (vC){
-                    vertex.push(...clamp(normalize(x-central[0], y-central[1], z-central[2])));
+                    vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
                 }
                 if (vT){
-                    var t_p = clamp([Math.cos(u), -Math.sin(u)]);
+                    var t_p = clamp([pos[0], -pos[2]]);
                     vertex.push(
                         t_p[0] * t_d[0] + t_s[0],
                         t_p[1] * t_d[1] + t_s[1]
