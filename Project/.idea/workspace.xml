@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="248802a2-25d6-497c-97df-99e34797f84b" name="Changes" comment="Add Texture Range, make cuboid texture">
+    <list default="true" id="248802a2-25d6-497c-97df-99e34797f84b" name="Changes" comment="Merge">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/object/character/spongebob.js" beforeDir="false" afterPath="$PROJECT_DIR$/object/character/spongebob.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/object/obj.js" beforeDir="false" afterPath="$PROJECT_DIR$/object/object.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/object/plane.js" beforeDir="false" afterPath="$PROJECT_DIR$/object/plane.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/object/quadric.js" beforeDir="false" afterPath="$PROJECT_DIR$/object/quadric.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/object/terrain/skybox.js" beforeDir="false" afterPath="$PROJECT_DIR$/object/terrain/skybox.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,22 +49,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;harry&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/My Computer/Harry (Kuliah)/Semester 4 2023-2024 Genap/GrafKom/Praktikum/Proyek-Grafkom/Project&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/My Computer/Harry (Kuliah)/Semester 4 2023-2024 Genap/GrafKom/Praktikum/Proyek-Grafkom/Project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -177,6 +171,7 @@
     <MESSAGE value="Adding Rotation &amp; Position Text Value" />
     <MESSAGE value="Exchangeable (x,y,z), Offset(vertex u, v) value, scale and position adjustment" />
     <MESSAGE value="Add Texture Range, make cuboid texture" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Texture Range, make cuboid texture" />
+    <MESSAGE value="Merge" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge" />
   </component>
 </project>

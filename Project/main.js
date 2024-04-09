@@ -1,6 +1,6 @@
 /** @type {WebGLRenderingContext} */
 
-import {Spongebob} from "./object/character/spongebob.js";
+// import {Spongebob} from "./object/character/spongebob.js";
 import {Skybox} from "./object/terrain/skybox.js";
 import {TexturedObject} from "./object/object.js";
 
