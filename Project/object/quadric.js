@@ -450,17 +450,49 @@ var QUADRIC = {
                 }
             }
             for (let i = 0; i < size - 1; i++) {
-                faces.push(i, size2 + i, size2 + i + 1);
-                faces.push(i, i + 1, size2 + i + 1);
+                faces.push(
+                    offset + i,
+                    offset + size2 + i,
+                    offset + size2 + i + 1
+                );
+                faces.push(
+                    offset + i,
+                    offset + i + 1,
+                    offset + size2 + i + 1
+                );
 
-                faces.push(size2 - size + i, size2 - size + size2 + i, size2 - size + size2 + i + 1);
-                faces.push(size2 - size + i, size2 - size + i + 1, size2 - size + size2 + i + 1);
+                faces.push(
+                    offset + size2 - size + i,
+                    offset + size2 - size + size2 + i,
+                    offset + size2 - size + size2 + i + 1
+                );
+                faces.push(
+                    offset + size2 - size + i,
+                    offset + size2 - size + i + 1,
+                    offset + size2 - size + size2 + i + 1
+                );
 
-                faces.push(i * size, (i+1) * size + size2, (i+1) * size);
-                faces.push(i * size, i * size + size2, (i+1) * size + size2);
+                faces.push(
+                    offset + i * size,
+                    offset + (i+1) * size + size2,
+                    offset + (i+1) * size
+                );
+                faces.push(
+                    offset + i * size,
+                    offset + i * size + size2,
+                    offset + (i+1) * size + size2
+                );
 
-                faces.push((i+1) * size - 1, (i+2) * size + size2 - 1, (i+2) * size - 1);
-                faces.push((i+1) * size - 1, (i+1) * size + size2 - 1, (i+2) * size + size2 - 1);
+                faces.push(
+                    offset + (i+1) * size - 1,
+                    offset + (i+2) * size + size2 - 1,
+                    offset + (i+2) * size - 1
+                );
+                faces.push(
+                    offset + (i+1) * size - 1,
+                    offset + (i+1) * size + size2 - 1,
+                    offset + (i+2) * size + size2 - 1
+                );
             }
             return faces;
         }
@@ -608,6 +640,151 @@ var QUADRIC = {
                     offset + i * 2 + 0,
                     offset + (i+1) * 2,
                     offset + (i+1) * 2 + 1
+                );
+            }
+            return faces;
+        }
+    },
+    sponge: {
+        createVertex: function (
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
+            [o_x = 0, o_y = 0, o_z = 0] = [],
+            [s_x = 1, s_y = 1, s_z = 1] = [],
+            squiggly = 1
+        ) {
+            var x = 0, y = 1, z = 2;
+            var vertex = [];
+            var repeat = 2;
+            var range = Math.PI / 2 * 4;
+            var intensity = 30;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+
+            for (let sheet = 0; sheet < 1; sheet++) {
+                for (let i = -1; i <= 1; i+=2) {
+                    vertex.push(o_x, o_y, o_z+i*s_z);
+                    if (vC){
+                        vertex.push(...clamp(normalize(o_x, o_y, o_z+i*s_z)));
+                    }
+                    if (vT){
+                        vertex.push(
+                            0.5 * t_d[0] + t_s[0],
+                            0.5 * t_d[1] + t_s[1]
+                        );
+                    }
+                    for (let j = 0; j <= 1; j++) {
+                        for (let k = -1; k <= 1; k+=2) {
+                            for(let u= -range; u <= range + 0.1; u += range/intensity) {
+                                var pos = [
+                                    u/range,
+                                    k + k * Math.sin(u * repeat + Math.PI/2) / intensity * squiggly,
+                                    i
+                                ];
+
+                                vertex.push(
+                                    pos[x + j] * s_x + o_x,
+                                    pos[y - j] * s_y + o_y,
+                                    pos[z] * s_z + o_z
+                                );
+
+                                if (vC){
+                                    vertex.push(...clamp(normalize(pos[x + j], pos[y - j], pos[z])));
+                                }
+                                if (vT){
+                                    var t_p = clamp([pos[0], -pos[2]]);
+                                    vertex.push(
+                                        t_p[0] * t_d[0] + t_s[0],
+                                        t_p[1] * t_d[1] + t_s[1]
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return vertex;
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            var intensity = 30;
+
+            intensity = intensity * 2 + 1;
+            for (let i = 0; i < 2; i++) {
+                var step = intensity * 4 + 1;
+                for (let j = 0; j < 4; j++) {
+                    for (let k = 1; k < intensity; k++) {
+                        faces.push(
+                            offset + i * step + 0,
+                            offset + i * step + j * intensity + k,
+                            offset + i * step + j * intensity + k + 1
+                        );
+                    }
+                }
+                faces.push(
+                    offset + i * step + 0,
+                    offset + i * step + intensity * 0 + 1,
+                    offset + i * step + intensity * 2 + 1,
+                    offset + i * step + 0,
+                    offset + i * step + intensity * 1,
+                    offset + i * step + intensity * 3 + 1,
+                    offset + i * step + 0,
+                    offset + i * step + intensity * 3,
+                    offset + i * step + intensity * 1 + 1,
+                    offset + i * step + 0,
+                    offset + i * step + intensity * 2,
+                    offset + i * step + intensity * 4,
+                );
+
+                for (let j = 0; j < 4; j++) {
+                    for (let k = 1; k < intensity; k++) {
+                        faces.push(
+                            j * intensity + k,
+                            j * intensity + k + 1,
+                            j * intensity + k + step
+                        );
+                        faces.push(
+                            j * intensity + k + 1,
+                            j * intensity + k + step,
+                            j * intensity + k + step + 1
+                        );
+                    }
+                }
+                faces.push(
+                    offset + intensity * 0 + 1,
+                    offset + intensity * 0 + 1 + step,
+                    offset + intensity * 2 + 1,
+
+                    offset + intensity * 0 + 1 + step,
+                    offset + intensity * 2 + 1,
+                    offset + intensity * 2 + 1 + step,
+
+
+                    offset + intensity * 1,
+                    offset + intensity * 1 + step,
+                    offset + intensity * 3 + 1,
+
+                    offset + intensity * 1 + step,
+                    offset + intensity * 3 + 1,
+                    offset + intensity * 3 + 1 + step,
+
+
+                    offset + intensity * 1 + 1,
+                    offset + intensity * 1 + 1 + step,
+                    offset + intensity * 3,
+
+                    offset + intensity * 1 + 1 + step,
+                    offset + intensity * 3,
+                    offset + intensity * 3 + step,
+
+
+                    offset + intensity * 2,
+                    offset + intensity * 2 + step,
+                    offset + intensity * 4,
+
+                    offset + intensity * 2 + step,
+                    offset + intensity * 4,
+                    offset + intensity * 4 + step,
                 );
             }
             return faces;
