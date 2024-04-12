@@ -1,36 +1,46 @@
-import {VertexColoredObject} from "../object.js";
+import {TexturedObject} from "../object.js";
 export {Spongebob}
 
-class Spongebob extends VertexColoredObject{
+class Spongebob extends TexturedObject{
     l_arm = null;
     r_arm = null;
     l_thigh = null;
     r_thigh = null;
     constructor(shader_program) {
         super([], [], shader_program);
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true},
+            [],
+            [0.1,0.1,0.1])
+        );
+
+        this.faces.push(...QUADRIC.sponge.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.sponge.createVertex(
+            {vT: true, t_s:[0, 1/3], t_e:[1, 2/3]},
+            [0,2,0],
+            [10,9.25,4])
+        );
+
+        this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cuboid.createVertex(
+            {vT: true, t_e:[1, 1/3]},
+            [0,-9,0],
+            [9,3,3.5])
+        );
+
+        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vC: true},
-        //     [],
-        //     [0.1,0.1,0.1])
+        //     {vT: true},
+        //     [-3.2,3.9,4],
+        //     [3.1,3.1,3])
         // );
-        // this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/6));
-        // this.vertex.push(...QUADRIC.cuboid.createVertex(
-        //     {vC: true},
-        //     [0,0,0],
-        //     [6,8,2]
-        // ));
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        //
+        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vC: true},
-        //     [-2.5,3,2],
-        //     [1.25,1.5,0.5])
-        // );
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
-        // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vC: true},
-        //     [2.5,3,2],
-        //     [1.25,1.5,0.5])
+        //     {vT: true},
+        //     [3.3,3.9,4],
+        //     [3.1,3.1,3])
         // );
 
         this.l_arm = new Spongebob_u_arm(shader_program);
@@ -45,13 +55,20 @@ class Spongebob extends VertexColoredObject{
             this.r_thigh,
         ];
 
-        LIBS.translate(this.l_thigh.LOCAL_MATRIX,-3,-8,0);
-        LIBS.translate(this.r_thigh.LOCAL_MATRIX,3,-8,0);
+        LIBS.translate(this.l_arm.LOCAL_MATRIX,-9.8,-5,0);
+        LIBS.translate(this.r_arm.LOCAL_MATRIX,9.8,-5,0);
+        LIBS.rotateZ(this.l_arm.LOCAL_MATRIX,-Math.PI/2);
+        LIBS.rotateZ(this.r_arm.LOCAL_MATRIX,Math.PI/2);
 
-        LIBS.translate(this.LOCAL_MATRIX,0,20,0);
+        LIBS.translate(this.l_thigh.LOCAL_MATRIX,-4.75,-12,0);
+        LIBS.translate(this.r_thigh.LOCAL_MATRIX,4.75,-12,0);
+
+        LIBS.translate(this.LOCAL_MATRIX,0,5,0);
+        LIBS.translate(this.WORLD_MATRIX,0,20,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
+        GL.bindTexture(GL.TEXTURE_2D, Texture[2]);
         temp = LIBS.get_I4();
         // LIBS.rotateY(temp, 0.05);
 
@@ -60,34 +77,36 @@ class Spongebob extends VertexColoredObject{
     }
 }
 
-class Spongebob_u_arm extends VertexColoredObject{
+class Spongebob_u_arm extends TexturedObject{
+    l_arm = null;
     constructor(shader_program) {
         super([], [], shader_program);
-        this.faces.push(...QUADRIC.sponge.createFaces(this.vertex.length/6));
-        this.vertex.push(...QUADRIC.sponge.createVertex(
-            {vC: true},
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true},
             [],
-            [6,8,2])
+            [0.1,0.1,0.1])
+        );
+        this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
+            {vT: true},
+            [0,-0.4,0],
+            [1.5,1.5,1.5])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true},
+            [0,-1.75,0],
+            [0.6,1.75,0.6])
         );
 
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
-        // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vC: true},
-        //     [],
-        //     [0.1,0.1,0.1])
-        // );
-        // this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/6));
-        // this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
-        //     {vC: true},
-        //     [0,0,0],
-        //     [1,1,1])
-        // );
-        // this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/6));
-        // this.vertex.push(...QUADRIC.cylinder.createVertex(
-        //     {vC: true},
-        //     [0,-2,0],
-        //     [0.4,2,0.4])
-        // );
+        this.l_arm = new Spongebob_l_arm(shader_program);
+
+        this.childs = [
+            this.l_arm
+        ];
+
+        LIBS.translate(this.l_arm.LOCAL_MATRIX,0,-3.5,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
@@ -99,7 +118,62 @@ class Spongebob_u_arm extends VertexColoredObject{
     }
 }
 
-class Spongebob_l_arm extends VertexColoredObject{
+class Spongebob_l_arm extends TexturedObject{
+    hand = null;
+    constructor(shader_program) {
+        super([], [], shader_program);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true},
+            [],
+            [0.6,0.6,0.6])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true},
+            [0,-1.75,0],
+            [0.6,1.75,0.6])
+        );
+
+        this.hand = new Spongebob_hand(shader_program);
+
+        this.childs = [
+            this.hand
+        ];
+
+        LIBS.translate(this.hand.LOCAL_MATRIX,0,-3.5,0);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        temp = LIBS.get_I4();
+        // LIBS.rotateY(temp, 0.05);
+
+        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_hand extends TexturedObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true},
+            [0,-1.25,0],
+            [1.5,1.5,1.5])
+        );
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        temp = LIBS.get_I4();
+        // LIBS.rotateY(temp, 0.05);
+
+        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_finger extends TexturedObject{
     constructor(shader_program) {
         super([], [], shader_program);
     }
@@ -113,55 +187,27 @@ class Spongebob_l_arm extends VertexColoredObject{
     }
 }
 
-class Spongebob_hand extends VertexColoredObject{
-    constructor(shader_program) {
-        super([], [], shader_program);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
-}
-
-class Spongebob_finger extends VertexColoredObject{
-    constructor(shader_program) {
-        super([], [], shader_program);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
-}
-
-class Spongebob_thigh extends VertexColoredObject{
+class Spongebob_thigh extends TexturedObject{
     leg = null;
     constructor(shader_program) {
         super([], [], shader_program);
-        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vC: true},
+            {vT: true},
             [],
             [0.1,0.1,0.1])
         );
-        this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/6));
-        this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
-            {vC: true},
-            [0,0,0],
-            [1,1,1])
-        );
-        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vC: true},
-            [0,-2,0],
-            [0.4,2,0.4])
+            {vT: true},
+            [],
+            [1.7,1.5,2])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true},
+            [0,-2.25,0],
+            [0.6,2.25,0.6])
         );
 
         this.leg = new Spongebob_leg(shader_program);
@@ -170,7 +216,7 @@ class Spongebob_thigh extends VertexColoredObject{
             this.leg
         ];
 
-        LIBS.translate(this.leg.LOCAL_MATRIX,0,-4,0);
+        LIBS.translate(this.leg.LOCAL_MATRIX,0,-4.5,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
@@ -182,21 +228,21 @@ class Spongebob_thigh extends VertexColoredObject{
     }
 }
 
-class Spongebob_leg extends VertexColoredObject{
+class Spongebob_leg extends TexturedObject{
     shoe = null;
     constructor(shader_program) {
         super([], [], shader_program);
-        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vC: true},
+            {vT: true},
             [],
-            [0.4,0.4,0.4])
+            [0.6,0.6,0.6])
         );
-        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vC: true},
-            [0,-2,0],
-            [0.4,2,0.4])
+            {vT: true},
+            [0,-2.4,0],
+            [0.6,2.4,0.6])
         );
 
         this.shoe = new Spongebob_shoe(shader_program);
@@ -205,7 +251,7 @@ class Spongebob_leg extends VertexColoredObject{
             this.shoe
         ];
 
-        LIBS.translate(this.shoe.LOCAL_MATRIX,0,-4,0);
+        LIBS.translate(this.shoe.LOCAL_MATRIX,0,-4.8,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
@@ -217,46 +263,46 @@ class Spongebob_leg extends VertexColoredObject{
     }
 }
 
-class Spongebob_shoe extends VertexColoredObject{
+class Spongebob_shoe extends TexturedObject{
     constructor(shader_program) {
         super([], [], shader_program);
-        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vC: true},
+            {vT: true},
             [],
             [0.1,0.1,0.1])
         );
 
-        this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_saddle.createVertex(
-            {vC: true},
-            [0,-0.1,1.6],
-            [0.9,0.3,1.1],
+            {vT: true},
+            [0,-0.2,2.5],
+            [0.9,0.2,1.1],
             [2,1,0],
-            [],
-            -4)
+            [-10,0],
+            -6)
         );
 
-        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vC: true},
-            [0,-0.2,3],
-            [1.3,1.2,1.5])
+            {vT: true},
+            [0,-0.3,3],
+            [1.3,1.1,1.4])
         );
 
-        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.donut.createVertex(
-            {vC: true},
+            {vT: true},
             [0,0.2,0],
-            [0.7,1,0.7],
+            [0.8,1.2,0.8],
             [],
             [],
             0.7)
         );
 
-        this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/6));
+        this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cuboid.createVertex(
-            {vC: true},
+            {vT: true},
             [0,-0.5,0],
             [0.8,0.8,0.8]
         ));

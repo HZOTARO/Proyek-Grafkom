@@ -198,7 +198,6 @@ var QUADRIC = {
                     }
                     if (vT){
                         var t_p = [...clamp([-u/Math.PI]), 1 - v/10];
-                        console.log(t_p)
                         vertex.push(
                             t_p[0] * t_d[0] + t_s[0],
                             t_p[1] * t_d[1] + t_s[1]
@@ -661,7 +660,22 @@ var QUADRIC = {
 
             var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
 
-            for (let sheet = 0; sheet < 1; sheet++) {
+            var texture = [
+                [
+                    [t_s[0] + 1/3 * t_d[0], t_s[1]], [1/3 * t_d[0], t_d[1]]
+                ],
+                [
+                    [t_s[0] + 2/3 * t_d[0], t_s[1]], [1/3 * t_d[0], t_d[1]]
+                ],
+                [
+                    [t_s[0], t_s[1]], [1/3 * t_d[0], t_d[1]]
+                ],
+                [
+                    [t_s[0] + 2/3 * t_d[0] + 0.2 * 1/3 * t_d[0], t_s[1] + 0.2 * t_d[0]], [1/3 * t_d[0] * 0.6, t_d[1] * 0.6]
+                ],
+            ];
+
+            for (let sheet = 0; sheet <= 1; sheet++) {
                 for (let i = -1; i <= 1; i+=2) {
                     vertex.push(o_x, o_y, o_z+i*s_z);
                     if (vC){
@@ -669,8 +683,8 @@ var QUADRIC = {
                     }
                     if (vT){
                         vertex.push(
-                            0.5 * t_d[0] + t_s[0],
-                            0.5 * t_d[1] + t_s[1]
+                            0.5 * texture[sheet + 1 + i][1][0] + texture[sheet + 1 + i][0][0],
+                            0.5 * texture[sheet + 1 + i][1][1] + texture[sheet + 1 + i][0][1]
                         );
                     }
                     for (let j = 0; j <= 1; j++) {
@@ -692,10 +706,10 @@ var QUADRIC = {
                                     vertex.push(...clamp(normalize(pos[x + j], pos[y - j], pos[z])));
                                 }
                                 if (vT){
-                                    var t_p = clamp([pos[0], -pos[2]]);
+                                    var t_p = clamp([pos[x + j], pos[y - j]]);
                                     vertex.push(
-                                        t_p[0] * t_d[0] + t_s[0],
-                                        t_p[1] * t_d[1] + t_s[1]
+                                        t_p[0] * texture[sheet + 1 + i][1][0] + texture[sheet + 1 + i][0][0],
+                                        t_p[1] * texture[sheet + 1 + i][1][1] + texture[sheet + 1 + i][0][1]
                                     );
                                 }
                             }
@@ -739,52 +753,52 @@ var QUADRIC = {
                 for (let j = 0; j < 4; j++) {
                     for (let k = 1; k < intensity; k++) {
                         faces.push(
-                            j * intensity + k,
-                            j * intensity + k + 1,
-                            j * intensity + k + step
+                            offset + 2 * step + j * intensity + k,
+                            offset + 2 * step + j * intensity + k + 1,
+                            offset + 2 * step + j * intensity + k + step
                         );
                         faces.push(
-                            j * intensity + k + 1,
-                            j * intensity + k + step,
-                            j * intensity + k + step + 1
+                            offset + 2 * step + j * intensity + k + 1,
+                            offset + 2 * step + j * intensity + k + step,
+                            offset + 2 * step + j * intensity + k + step + 1
                         );
                     }
                 }
                 faces.push(
-                    offset + intensity * 0 + 1,
-                    offset + intensity * 0 + 1 + step,
-                    offset + intensity * 2 + 1,
+                    offset + 2 * step + intensity * 0 + 1,
+                    offset + 2 * step + intensity * 0 + 1 + step,
+                    offset + 2 * step + intensity * 2 + 1,
 
-                    offset + intensity * 0 + 1 + step,
-                    offset + intensity * 2 + 1,
-                    offset + intensity * 2 + 1 + step,
-
-
-                    offset + intensity * 1,
-                    offset + intensity * 1 + step,
-                    offset + intensity * 3 + 1,
-
-                    offset + intensity * 1 + step,
-                    offset + intensity * 3 + 1,
-                    offset + intensity * 3 + 1 + step,
+                    offset + 2 * step + intensity * 0 + 1 + step,
+                    offset + 2 * step + intensity * 2 + 1,
+                    offset + 2 * step + intensity * 2 + 1 + step,
 
 
-                    offset + intensity * 1 + 1,
-                    offset + intensity * 1 + 1 + step,
-                    offset + intensity * 3,
+                    offset + 2 * step + intensity * 1,
+                    offset + 2 * step + intensity * 1 + step,
+                    offset + 2 * step + intensity * 3 + 1,
 
-                    offset + intensity * 1 + 1 + step,
-                    offset + intensity * 3,
-                    offset + intensity * 3 + step,
+                    offset + 2 * step + intensity * 1 + step,
+                    offset + 2 * step + intensity * 3 + 1,
+                    offset + 2 * step + intensity * 3 + 1 + step,
 
 
-                    offset + intensity * 2,
-                    offset + intensity * 2 + step,
-                    offset + intensity * 4,
+                    offset + 2 * step + intensity * 1 + 1,
+                    offset + 2 * step + intensity * 1 + 1 + step,
+                    offset + 2 * step + intensity * 3,
 
-                    offset + intensity * 2 + step,
-                    offset + intensity * 4,
-                    offset + intensity * 4 + step,
+                    offset + 2 * step + intensity * 1 + 1 + step,
+                    offset + 2 * step + intensity * 3,
+                    offset + 2 * step + intensity * 3 + step,
+
+
+                    offset + 2 * step + intensity * 2,
+                    offset + 2 * step + intensity * 2 + step,
+                    offset + 2 * step + intensity * 4,
+
+                    offset + 2 * step + intensity * 2 + step,
+                    offset + 2 * step + intensity * 4,
+                    offset + 2 * step + intensity * 4 + step,
                 );
             }
             return faces;

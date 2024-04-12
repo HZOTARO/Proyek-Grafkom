@@ -151,10 +151,6 @@ function main() {
         mZ += SPEED * Math.cos(A) * Math.cos(T);
         mY += SPEED * Math.sin(A);
 
-        // mX += mX;
-        // pY += nY;
-        // pZ += nZ;
-
         SPEED = 0.5;
     }
 
@@ -179,10 +175,13 @@ function main() {
     var VIEW_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    var spongebob = new Spongebob(Shader.VERTEX_COLOR);
+    var spongebob = new Spongebob(Shader.TEXTURE);
     var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
+    ];
+
+    var textured_object = [
         spongebob
     ];
 
@@ -198,9 +197,9 @@ function main() {
         // new TexturedObject(
         //     PLANE.rectangle.createVertex(
         //         {vT: true},
-        //         [-5,0,0],
-        //         [],
-        //         [0,1,2]
+        //         [0,20,0],
+        //         [20,-20,20],
+        //         [0,2,1]
         //     ),
         //     PLANE.rectangle.createFaces(0), Shader.TEXTURE),
     ];
@@ -297,6 +296,9 @@ function main() {
     for (let i = 0; i < vertex_colored_object.length; i++) {
         vertex_colored_object[i].setup();
     }
+    for (let i = 0; i < textured_object.length; i++) {
+        textured_object[i].setup();
+    }
     for (let i = 0; i < test_quadric.length; i++) {
         test_quadric[i].setup();
     }
@@ -367,6 +369,11 @@ function main() {
             test_quadric[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
+        for (let i = 0; i < textured_object.length; i++) {
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
+
+        GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
         for (let i = 0; i < test_plane.length; i++) {
             test_plane[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
