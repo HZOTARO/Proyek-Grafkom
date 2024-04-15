@@ -1,12 +1,15 @@
 var TEXTURE = {
     createTexture: function (){
         var src = [
+            "cube",
+            "grid",
             "sand",
             "test",
+            "cubemap",
         ];
         var textures = [];
         for (const name of src) {
-            textures.push(this.load_texture("./asset/" + name + ".png"), true)
+            textures.push(this.load_texture("./asset/" + name + ".png",false));
         }
         return textures;
     },
@@ -25,7 +28,7 @@ var TEXTURE = {
             GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
             GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, image);
             // GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
-            // GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST_MIPMAP_LINEAR);
+            // GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
             // GL.generateMipmap(GL.TEXTURE_2D);
             if (TEXTURE.isPowerOf2(image.width) && TEXTURE.isPowerOf2(image.height)) {
                 // Yes, it's a power of 2. Generate mips.
@@ -46,4 +49,4 @@ var TEXTURE = {
 
         return texture;
     },
-}
+};
