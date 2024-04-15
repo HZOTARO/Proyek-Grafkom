@@ -176,13 +176,14 @@ function main() {
 
     /*========================= OBJECTS ========================= */
     var spongebob = new Spongebob(Shader.TEXTURE);
-    var land = new Skybox(Shader.TEXTURE);
+    // var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
     ];
 
     var textured_object = [
-        spongebob
+        // land,
+        spongebob,
     ];
 
     var test_plane = [
@@ -305,7 +306,6 @@ function main() {
     for (let i = 0; i < test_plane.length; i++) {
         test_plane[i].setup();
     }
-    land.setup();
 
     /*========================= DRAWING ========================= */
     GL.clearColor(0.5, 0.5, 0.5, 0.0);
@@ -373,11 +373,10 @@ function main() {
             textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
-        GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
+        // GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
         for (let i = 0; i < test_plane.length; i++) {
             test_plane[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
-        land.render(VIEW_MATRIX, PROJECTION_MATRIX);
 
         /*========================= DATA ========================= */
         node[0].nodeValue = pX.toFixed(0) + ", " + pY.toFixed(0) + ", " + pZ.toFixed(0);

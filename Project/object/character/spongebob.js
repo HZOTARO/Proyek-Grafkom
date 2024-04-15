@@ -70,7 +70,8 @@ class Spongebob extends TexturedObject{
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         GL.bindTexture(GL.TEXTURE_2D, Texture[2]);
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        // LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -89,13 +90,13 @@ class Spongebob_u_arm extends TexturedObject{
         );
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
-            {vT: true},
+            {vT: true, t_s:[2/12,9/12], t_e:[2/12,9/12]},
             [0,-0.4,0],
             [1.5,1.5,1.5])
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [0,-1.75,0],
             [0.6,1.75,0.6])
         );
@@ -111,7 +112,8 @@ class Spongebob_u_arm extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX,PROJECTION_MATRIX);
@@ -124,13 +126,13 @@ class Spongebob_l_arm extends TexturedObject{
         super([], [], shader_program);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [],
             [0.6,0.6,0.6])
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [0,-1.75,0],
             [0.6,1.75,0.6])
         );
@@ -146,7 +148,8 @@ class Spongebob_l_arm extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -154,33 +157,159 @@ class Spongebob_l_arm extends TexturedObject{
 }
 
 class Spongebob_hand extends TexturedObject{
+    f1 = null;
+    f2 = null;
+    f3 = null;
+    f4 = null;
     constructor(shader_program) {
         super([], [], shader_program);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
-            [0,-1.25,0],
-            [1.5,1.5,1.5])
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [],
+            [0.6,0.6,0.6])
         );
+
+        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.donut.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [0,-0.8,0],
+            [0.5,0.5,0.5],
+            [1,0,2],
+            [],
+            1.5
+            )
+        );
+
+        this.f1 = new Spongebob_p_phalanx(shader_program);
+        this.f2 = new Spongebob_p_phalanx(shader_program);
+        this.f3 = new Spongebob_p_phalanx(shader_program);
+        this.f4 = new Spongebob_p_phalanx(shader_program);
+
+        this.childs = [
+            this.f1,
+            this.f2,
+            this.f3,
+            this.f4,
+        ];
+
+        for (let i = 0; i < this.childs.length; i++) {
+            LIBS.translateY(this.childs[i].LOCAL_MATRIX, -0.8);
+            LIBS.rotateX(this.childs[i].LOCAL_MATRIX, 0.75 * i - 1.25);
+
+            temp = LIBS.get_I4();
+            LIBS.translateY(temp,-1.25);
+            this.childs[i].LOCAL_MATRIX = LIBS.multiply(temp, this.childs[i].LOCAL_MATRIX);
+        }
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
-class Spongebob_finger extends TexturedObject{
+class Spongebob_p_phalanx extends TexturedObject{
+    extend = null;
     constructor(shader_program) {
         super([], [], shader_program);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [],
+            [0.3,0.3,0.3])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [0,-0.3,0],
+            [0.3,0.3,0.3])
+        );
+        this.extend= new Spongebob_m_phalanx(shader_program);
+
+        this.childs = [
+            this.extend
+        ];
+
+        LIBS.translate(this.extend.LOCAL_MATRIX,0,-0.6,0);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
+
+        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_m_phalanx extends TexturedObject{
+    extend = null;
+    constructor(shader_program) {
+        super([], [], shader_program);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [],
+            [0.3,0.3,0.3])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [0,-0.3,0],
+            [0.3,0.3,0.3])
+        );
+        this.extend= new Spongebob_d_phalanx(shader_program);
+
+        this.childs = [
+            this.extend
+        ];
+
+        LIBS.translate(this.extend.LOCAL_MATRIX,0,-0.6,0);
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        temp = LIBS.get_I4();
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
+
+        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+    }
+}
+
+class Spongebob_d_phalanx extends TexturedObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [],
+            [0.3,0.3,0.3])
+        );
+        this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.cylinder.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [0,-0.3,0],
+            [0.3,0.3,0.3])
+        );
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            [0,-0.6,0],
+            [0.3,0.3,0.3])
+        );
+    }
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX){
+        temp = LIBS.get_I4();
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -199,13 +328,13 @@ class Spongebob_thigh extends TexturedObject{
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true},
+            {vT: true, t_s:[3/12,11/12], t_e:[3/12,11/12]},
             [],
             [1.7,1.5,2])
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [0,-2.25,0],
             [0.6,2.25,0.6])
         );
@@ -221,7 +350,8 @@ class Spongebob_thigh extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -234,13 +364,13 @@ class Spongebob_leg extends TexturedObject{
         super([], [], shader_program);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [],
             [0.6,0.6,0.6])
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
             [0,-2.4,0],
             [0.6,2.4,0.6])
         );
@@ -256,7 +386,8 @@ class Spongebob_leg extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateZ(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
@@ -275,7 +406,7 @@ class Spongebob_shoe extends TexturedObject{
 
         this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_saddle.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,9/12], t_e:[1/12,9/12]},
             [0,-0.2,2.5],
             [0.9,0.2,1.1],
             [2,1,0],
@@ -285,14 +416,14 @@ class Spongebob_shoe extends TexturedObject{
 
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,9/12], t_e:[1/12,9/12]},
             [0,-0.3,3],
             [1.3,1.1,1.4])
         );
 
         this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.donut.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,9/12], t_e:[1/12,9/12]},
             [0,0.2,0],
             [0.8,1.2,0.8],
             [],
@@ -302,7 +433,7 @@ class Spongebob_shoe extends TexturedObject{
 
         this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cuboid.createVertex(
-            {vT: true},
+            {vT: true, t_s:[1/12,9/12], t_e:[1/12,9/12]},
             [0,-0.5,0],
             [0.8,0.8,0.8]
         ));
@@ -310,7 +441,8 @@ class Spongebob_shoe extends TexturedObject{
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
         temp = LIBS.get_I4();
-        // LIBS.rotateY(temp, 0.05);
+        LIBS.rotateX(temp, 0.05);
+        LIBS.rotateY(temp, 0.05);
 
         this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);

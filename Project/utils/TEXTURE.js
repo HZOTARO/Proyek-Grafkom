@@ -4,6 +4,7 @@ var TEXTURE = {
             "grid",
             "test",
             "spongebob",
+            // "spongebob - Copy",
             "cube",
             "sand",
             "cubemap",
