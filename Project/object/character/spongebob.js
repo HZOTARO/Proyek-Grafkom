@@ -2,6 +2,8 @@ import {TexturedObject} from "../object.js";
 export {Spongebob}
 
 class Spongebob extends TexturedObject{
+    time = 0;
+    negate = false;
     l_arm = null;
     r_arm = null;
     l_thigh = null;
@@ -67,13 +69,20 @@ class Spongebob extends TexturedObject{
         LIBS.translate(this.WORLD_MATRIX,0,20,0);
     }
 
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        GL.bindTexture(GL.TEXTURE_2D, Texture[2]);
-        temp = LIBS.get_I4();
-        // LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
+    rotate(dt){
+        if (this.time > 200) this.negate = true;
+        else if (this.time < -200) this.negate = false;
+        this.negate ? this.time -= dt : this.time += dt;
+        var translate, scale;
+        this.negate ? translate = -1 : translate = 1;
+        this.negate ? scale = 100/99 : scale = 99/100;
+        var arr = [LIBS.get_MScale(scale,scale,scale), LIBS.get_MTranslate(0,translate,0)];
+        this.animate(arr);
+    }
 
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+    render(VIEW_MATRIX, PROJECTION_MATRIX, dt){
+        GL.bindTexture(GL.TEXTURE_2D, Texture[2]);
+        this.rotate(dt);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -109,15 +118,6 @@ class Spongebob_u_arm extends TexturedObject{
 
         LIBS.translate(this.l_arm.LOCAL_MATRIX,0,-3.5,0);
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX,PROJECTION_MATRIX);
-    }
 }
 
 class Spongebob_l_arm extends TexturedObject{
@@ -144,15 +144,6 @@ class Spongebob_l_arm extends TexturedObject{
         ];
 
         LIBS.translate(this.hand.LOCAL_MATRIX,0,-3.5,0);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -197,24 +188,16 @@ class Spongebob_hand extends TexturedObject{
             LIBS.translateY(this.childs[i].LOCAL_MATRIX, -0.8);
             LIBS.rotateX(this.childs[i].LOCAL_MATRIX, 0.75 * i - 1.25);
 
-            temp = LIBS.get_I4();
+            var temp = LIBS.get_I4();
             LIBS.translateY(temp,-1.25);
             this.childs[i].LOCAL_MATRIX = LIBS.multiply(temp, this.childs[i].LOCAL_MATRIX);
         }
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
 class Spongebob_p_phalanx extends TexturedObject{
     extend = null;
+    
     constructor(shader_program) {
         super([], [], shader_program);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
@@ -236,15 +219,6 @@ class Spongebob_p_phalanx extends TexturedObject{
         ];
 
         LIBS.translate(this.extend.LOCAL_MATRIX,0,-0.6,0);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -272,15 +246,6 @@ class Spongebob_m_phalanx extends TexturedObject{
 
         LIBS.translate(this.extend.LOCAL_MATRIX,0,-0.6,0);
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Spongebob_d_phalanx extends TexturedObject{
@@ -304,15 +269,6 @@ class Spongebob_d_phalanx extends TexturedObject{
             [0,-0.6,0],
             [0.3,0.3,0.3])
         );
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -347,15 +303,6 @@ class Spongebob_thigh extends TexturedObject{
 
         LIBS.translate(this.leg.LOCAL_MATRIX,0,-4.5,0);
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Spongebob_leg extends TexturedObject{
@@ -382,15 +329,6 @@ class Spongebob_leg extends TexturedObject{
         ];
 
         LIBS.translate(this.shoe.LOCAL_MATRIX,0,-4.8,0);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -437,14 +375,5 @@ class Spongebob_shoe extends TexturedObject{
             [0,-0.5,0],
             [0.8,0.8,0.8]
         ));
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        temp = LIBS.get_I4();
-        LIBS.rotateX(temp, 0.05);
-        LIBS.rotateY(temp, 0.05);
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
