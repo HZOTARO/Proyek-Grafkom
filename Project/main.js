@@ -370,7 +370,7 @@ function main() {
         }
 
         for (let i = 0; i < textured_object.length; i++) {
-            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
         }
 
         // GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
