@@ -1,11 +1,14 @@
 var TEXTURE = {
     createTexture: function (){
         var src = [
-            "cube",
             "grid",
-            "sand",
             "test",
+            "spongebob",
+            // "spongebob - Copy",
+            "cube",
+            "sand",
             "cubemap",
+            "sketch",
         ];
         var textures = [];
         for (const name of src) {

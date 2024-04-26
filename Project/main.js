@@ -152,10 +152,6 @@ function main() {
         mZ += SPEED * Math.cos(A) * Math.cos(T);
         mY += SPEED * Math.sin(A);
 
-        // mX += mX;
-        // pY += nY;
-        // pZ += nZ;
-
         SPEED = 0.5;
     }
 
@@ -178,7 +174,6 @@ function main() {
     //matrix
     var PROJECTION_MATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 0.1, 1000);
     var VIEW_MATRIX = LIBS.get_I4();
-    var MODEL_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
     // var spongebob = new Spongebob(Shader.TEXTURE);
@@ -186,7 +181,11 @@ function main() {
     var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
-        // spongebob,
+    ];
+
+    var textured_object = [
+        // land,
+        spongebob,
     ];
 
     var textured_object = [
@@ -205,9 +204,9 @@ function main() {
         // new TexturedObject(
         //     PLANE.rectangle.createVertex(
         //         {vT: true},
-        //         [-5,0,0],
-        //         [],
-        //         [0,1,2]
+        //         [0,20,0],
+        //         [20,-20,20],
+        //         [0,2,1]
         //     ),
         //     PLANE.rectangle.createFaces(0), Shader.TEXTURE),
     ];
@@ -313,7 +312,6 @@ function main() {
     for (let i = 0; i < test_plane.length; i++) {
         test_plane[i].setup();
     }
-    land.setup();
 
     /*========================= DRAWING ========================= */
     GL.clearColor(0.5, 0.5, 0.5, 0.0);
@@ -378,13 +376,13 @@ function main() {
         }
 
         for (let i = 0; i < textured_object.length; i++) {
-            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
         }
 
+        // GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
         for (let i = 0; i < test_plane.length; i++) {
             test_plane[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
-        land.render(VIEW_MATRIX, PROJECTION_MATRIX);
 
         /*========================= DATA ========================= */
         node[0].nodeValue = pX.toFixed(0) + ", " + pY.toFixed(0) + ", " + pZ.toFixed(0);
