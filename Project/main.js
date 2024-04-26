@@ -1,6 +1,7 @@
 /** @type {WebGLRenderingContext} */
 
 // import {Spongebob} from "./object/character/spongebob.js";
+import {Patrick} from "./object/character/patrick.js";
 import {Skybox} from "./object/terrain/skybox.js";
 import {TexturedObject} from "./object/object.js";
 
@@ -180,11 +181,16 @@ function main() {
     var MODEL_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    // var spongebob = new Spongebob(Shader.VERTEX_COLOR);
+    // var spongebob = new Spongebob(Shader.TEXTURE);
+    var patrick = new Patrick(Shader.TEXTURE);
     var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
         // spongebob,
+    ];
+
+    var textured_object = [
+        patrick
     ];
 
     var test_plane = [
@@ -298,6 +304,9 @@ function main() {
     for (let i = 0; i < vertex_colored_object.length; i++) {
         vertex_colored_object[i].setup();
     }
+    for (let i = 0; i < textured_object.length; i++) {
+        textured_object[i].setup();
+    }
     for (let i = 0; i < test_quadric.length; i++) {
         test_quadric[i].setup();
     }
@@ -366,6 +375,10 @@ function main() {
         GL.useProgram(Shader.TEXTURE);
         for (let i = 0; i < test_quadric.length; i++) {
             test_quadric[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
+
+        for (let i = 0; i < textured_object.length; i++) {
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
         for (let i = 0; i < test_plane.length; i++) {

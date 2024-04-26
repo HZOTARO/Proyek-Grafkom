@@ -17,7 +17,7 @@ class Skybox extends TexturedObject{
         super(vertex, faces, shader_program);
 
         this.childs = [
-            new Ball(shader_program)
+            // new Ball(shader_program)
         ];
     }
 
