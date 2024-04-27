@@ -727,5 +727,77 @@ var QUADRIC = {
             }
             return faces;
         }
+    },
+
+    hyperboloid: {
+        createVertex: function (
+            {vC = false, vT = false,
+                t_s = [0, 0], t_e = [1, 1]} = {},
+                [o_x = 0, o_y = 0, o_z = 0] = [],
+                [s_x = 1, s_y = 1, s_z = 1] = [],
+                [x = 0, y = 1, z = 2] = [],
+                [o_u = 0, o_v = 0] = []
+        ) {
+            var vertex = [];
+            var central = [o_x, o_y, o_z];
+
+            var intensity = 30;
+            var increment = Math.PI / intensity;
+
+            var u_rotate = Math.PI/2 + o_u;
+            var v_rotate = 0 + o_v;
+
+            var t_d = [t_e[0] - t_s[0], t_e[1] - t_s[1]];
+            for (let u = -Math.PI; u <= Math.PI + 0.1; u += increment) {
+                for (let v = -Math.PI / 2; v <= Math.PI / 2 + 0.1; v += increment) {
+                    var u2 = u + u_rotate;
+                    var v2 = v + v_rotate;
+
+                    var pos = [
+                        (1/ Math.cos(v2)) * Math.cos(u2),
+                        Math.tan(v2),
+                        (1/ Math.cos(v2)) * Math.sin(u2)
+                    ];
+
+                    vertex.push(
+                        pos[x] * s_x + o_x,
+                        pos[y] * s_y + o_y,
+                        pos[z] * s_z + o_z
+                    );
+
+                    if (vC){
+                        vertex.push(...clamp(normalize(pos[x]-central[x], pos[y]-central[y], pos[z]-central[z])));
+                    }
+                    if (vT){
+                        var t_p = clamp([-u/Math.PI, v/Math.PI*2]);
+                        vertex.push(
+                            t_p[0] * t_d[0] + t_s[0],
+                            t_p[1] * t_d[1] + t_s[1]
+                        );
+                    }
+                }
+            }
+            return vertex;
+        },
+        createFaces: function (offset) {
+            var faces = [];
+            var intensity = 30;
+            intensity++;
+            for (let i = 0; i < intensity * 2 - 2; i++) {
+                for (let j = 0; j < intensity -1; j++) {
+                    faces.push(
+                        offset + i * intensity + j,
+                        offset + (i + 1) * intensity + j,
+                        offset + (i + 1) * intensity + j + 1
+                    );
+                    faces.push(
+                        offset + i * intensity + j,
+                        offset + (i + 1) * intensity + j + 1,
+                        offset + i * intensity + j + 1
+                    );
+                }
+            }
+            return faces;
+        }
     }
 };

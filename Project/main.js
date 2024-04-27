@@ -1,8 +1,7 @@
 /** @type {WebGLRenderingContext} */
 
-// import {Spongebob} from "./object/character/spongebob.js";
+import {Squidward} from "./object/character/squidward.js";
 import {Skybox} from "./object/terrain/skybox.js";
-import {TexturedObject} from "./object/object.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -99,7 +98,7 @@ function main() {
         ALPHA += dY * 2 * Math.PI / CANVAS.height;
 
         // ALPHA = Math.max(Math.min(0,ALPHA), -Math.PI/2);
-        
+
         if (THETA >= Math.PI){
             THETA -= 2 * Math.PI;
         }else if (THETA <= -Math.PI){
@@ -180,9 +179,12 @@ function main() {
     var MODEL_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    // var spongebob = new Spongebob(Shader.VERTEX_COLOR);
+    var squidward = new Squidward(Shader.COLOR);
     var land = new Skybox(Shader.TEXTURE);
 
+    var colored_object = [
+      squidward
+    ];
     var vertex_colored_object = [
         // spongebob,
     ];
@@ -295,6 +297,9 @@ function main() {
     ];
 
     /*========================= SETUP ========================= */
+    for (let i = 0; i < colored_object.length; i++) {
+        colored_object[i].setup();
+    }
     for (let i = 0; i < vertex_colored_object.length; i++) {
         vertex_colored_object[i].setup();
     }
@@ -357,6 +362,10 @@ function main() {
         // LIBS.setPosition(MODEL_MATRIX,pos_x,pos_y,pos_z);
 
         /*========================= RENDER ========================= */
+        GL.useProgram(Shader.COLOR);
+        for (let i = 0; i < colored_object.length; i++) {
+            colored_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
 
         GL.useProgram(Shader.VERTEX_COLOR);
         for (let i = 0; i < vertex_colored_object.length; i++) {

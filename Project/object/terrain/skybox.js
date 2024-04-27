@@ -17,7 +17,7 @@ class Skybox extends TexturedObject{
         super(vertex, faces, shader_program);
 
         this.childs = [
-            new Ball(shader_program)
+            // new Ball(shader_program)
         ];
     }
 
@@ -28,25 +28,25 @@ class Skybox extends TexturedObject{
     }
 }
 
-class Ball extends TexturedObject{
-    constructor(shader_program) {
-        var vertex = [];
-        var faces = [];
-
-        faces.push(...QUADRIC.ellipsoid.createFaces(vertex.length/5));
-        vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
-            [],
-            [],
-            [0,2,1]
-        ));
-
-        super(vertex, faces, shader_program);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX){
-        GL.bindTexture(GL.TEXTURE_2D, Texture[3]);
-        this.MODEL_MATRIX = LIBS.get_I4();
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
-}
+// class Ball extends TexturedObject{
+//     constructor(shader_program) {
+//         var vertex = [];
+//         var faces = [];
+//
+//         faces.push(...QUADRIC.ellipsoid.createFaces(vertex.length/5));
+//         vertex.push(...QUADRIC.ellipsoid.createVertex(
+//             {vT: true},
+//             [],
+//             [],
+//             [0,2,1]
+//         ));
+//
+//         super(vertex, faces, shader_program);
+//     }
+//
+//     render(VIEW_MATRIX, PROJECTION_MATRIX){
+//         GL.bindTexture(GL.TEXTURE_2D, Texture[3]);
+//         this.MODEL_MATRIX = LIBS.get_I4();
+//         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+//     }
+// }
