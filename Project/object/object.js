@@ -48,11 +48,26 @@ class BaseObject{
         });
     }
 
+    animate(ANIMATE_MATRIX_ARRAY){
+        var x = 0;
+        this.anim_util(ANIMATE_MATRIX_ARRAY,[x]);
+    }
+
+    anim_util(ANIMATE_MATRIX_ARRAY, index){
+        if (ANIMATE_MATRIX_ARRAY.length<=index) return;
+        this.LOCAL_MATRIX = LIBS.multiply(ANIMATE_MATRIX_ARRAY[index[0]], this.LOCAL_MATRIX);
+        index[0]++;
+        this.childs.forEach(child => {
+            child.anim_util(ANIMATE_MATRIX_ARRAY, index);
+        });
+    }
+
     render_setup(VIEW_MATRIX, PROJECTION_MATRIX){
         this.MODEL_MATRIX = LIBS.multiply(this.LOCAL_MATRIX, this.WORLD_MATRIX);
         this.childs.forEach(child => {
             child.WORLD_MATRIX = this.MODEL_MATRIX;
         });
+
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
@@ -124,7 +139,7 @@ class ColoredObject extends BaseObject{
     _greyScality = null;
 
     constructor(vertex, faces, shader_program, red, green, blue, grayScale) {
-        super(vertex, faces, shader_program);
+        super(vertex, faces, shader_vertex_source, shader_fragment_source);
         this._color = GL.getUniformLocation(shader_program, "vColor");
         this._greyScality = GL.getUniformLocation(shader_program, "greyScality");
 
