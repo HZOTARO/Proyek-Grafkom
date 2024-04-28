@@ -3,12 +3,13 @@ var TEXTURE = {
         var src = [
             "grid",
             "test",
-            "spongebob",
-            // "spongebob - Copy",
             "cube",
             "sand",
-            "cubemap",
-            "sketch",
+            "dome",
+            "spongebob",
+            "patrick",
+            "squidward",
+            "spongebob_house"
         ];
         var textures = [];
         for (const name of src) {
