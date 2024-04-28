@@ -98,14 +98,11 @@ var LIBS = {
         m[9] = c * m[9] + s * mv8;
     },
 
-    // get_MRotate: function (x, y, z) {
-    //     return [
-    //         1, 0, 0, 0,
-    //         0, 1, 0, 0,
-    //         0, 0, 1, 0,
-    //         0, 0, 0, 1
-    //     ];
-    // },
+    get_MRotate: function (x, y, z) {
+        var m = this.get_I4();
+        this.rotate(m, x, y, z);
+        return m;
+    },
 
     translate: function (m, x, y, z) {
         m[12] += x;

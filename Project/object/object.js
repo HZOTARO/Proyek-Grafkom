@@ -21,7 +21,6 @@ class BaseObject{
     constructor(vertex, faces, shader_program) {
         this.vertex = vertex;
         this.faces = faces;
-
         //Uniform
         this._PMatrix = GL.getUniformLocation(shader_program, "PMatrix");
         this._VMatrix = GL.getUniformLocation(shader_program, "VMatrix");
@@ -55,7 +54,7 @@ class BaseObject{
 
     anim_util(ANIMATE_MATRIX_ARRAY, index){
         if (ANIMATE_MATRIX_ARRAY.length<=index) return;
-        this.LOCAL_MATRIX = LIBS.multiply(ANIMATE_MATRIX_ARRAY[index[0]], this.LOCAL_MATRIX);
+        if(ANIMATE_MATRIX_ARRAY[index[0]] != null) this.LOCAL_MATRIX = LIBS.multiply(ANIMATE_MATRIX_ARRAY[index[0]], this.LOCAL_MATRIX);
         index[0]++;
         this.childs.forEach(child => {
             child.anim_util(ANIMATE_MATRIX_ARRAY, index);
@@ -68,7 +67,6 @@ class BaseObject{
             child.WORLD_MATRIX = this.MODEL_MATRIX;
         });
 
-        GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
 
@@ -139,8 +137,8 @@ class ColoredObject extends BaseObject{
     _greyScality = null;
 
     constructor(vertex, faces, shader_program, red, green, blue, grayScale) {
-        super(vertex, faces, shader_vertex_source, shader_fragment_source);
-        this._color = GL.getUniformLocation(shader_program, "vColor");
+        super(vertex, faces, shader_program);
+        this._color = GL.getUniformLocation(shader_program, "outColor");
         this._greyScality = GL.getUniformLocation(shader_program, "greyScality");
 
         this.r = red;

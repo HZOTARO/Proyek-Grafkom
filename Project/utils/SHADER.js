@@ -1,31 +1,37 @@
 var shader_vertex_source = `
       attribute vec3 position;
-      attribute vec2 uv;
-      attribute vec3 color;
       
-      varying vec2 vUV;
-
       uniform mat4 PMatrix, VMatrix, MMatrix;
      
-      varying vec3 vColor;
       void main(void) {
           gl_Position = PMatrix * VMatrix * MMatrix * vec4(position, 1.);
-          vUV = uv;
-          vColor = color;
           gl_PointSize=5.0;
       }`;
 
 var shader_fragment_source = `
       precision mediump float;
       
-      uniform vec3 vColor;
+      uniform vec3 outColor;
       uniform float greyScality;
 
       void main(void) {
-          float greyScaleValue = (vColor.r + vColor.g + vColor.b)/3.;
+          float greyScaleValue = (outColor.r + outColor.g + outColor.b)/3.;
           vec3 greyScaleColor = vec3(greyScaleValue, greyScaleValue, greyScaleValue);
-          vec3 color = mix(greyScaleColor, vColor, greyScality);
+          vec3 color = mix(greyScaleColor, outColor, greyScality);
           gl_FragColor = vec4(color, 1.);
+      }`;
+
+var shader_vertex_source_texture = `
+      attribute vec3 position;
+      attribute vec2 uv;
+      varying vec2 vUV;
+
+      uniform mat4 PMatrix, VMatrix, MMatrix;
+     
+      void main(void) {
+          gl_Position = PMatrix * VMatrix * MMatrix * vec4(position, 1.);
+          vUV = uv;
+          gl_PointSize=5.0;
       }`;
 
 var shader_fragment_source_texture = `
@@ -36,6 +42,19 @@ var shader_fragment_source_texture = `
 
       void main(void) {
           gl_FragColor = texture2D(sampler, vUV);
+      }`;
+
+var shader_vertex_source_vertex = `
+      attribute vec3 position;
+      attribute vec3 color;
+
+      uniform mat4 PMatrix, VMatrix, MMatrix;
+     
+      varying vec3 vColor;
+      void main(void) {
+          gl_Position = PMatrix * VMatrix * MMatrix * vec4(position, 1.);
+          vColor = color;
+          gl_PointSize=5.0;
       }`;
 
 var shader_fragment_source_vertex = `
@@ -59,8 +78,11 @@ var SHADER = {
             return shader;
         };
 
-        var shader_vertex = compile_shader(shader_vertex_source, GL.VERTEX_SHADER, "VERTEX");
-        var shader_fragment = [];
+        var shader_vertex_src = [
+            shader_vertex_source,
+            shader_vertex_source_vertex,
+            shader_vertex_source_texture
+        ];
 
         var shader_fragment_src = [
             shader_fragment_source,
@@ -68,12 +90,16 @@ var SHADER = {
             shader_fragment_source_texture
         ];
 
+        var shader_vertex = [];
+        var shader_fragment = [];
+
         var SHADER_PROGRAM = [];
 
         for (let i = 0; i < shader_fragment_src.length; i++) {
+            shader_vertex[i] = compile_shader(shader_vertex_src[i], GL.VERTEX_SHADER, "VERTEX");
             shader_fragment[i] = compile_shader(shader_fragment_src[i], GL.FRAGMENT_SHADER, "FRAGMENT");
             SHADER_PROGRAM[i] = GL.createProgram();
-            GL.attachShader(SHADER_PROGRAM[i], shader_vertex);
+            GL.attachShader(SHADER_PROGRAM[i], shader_vertex[i]);
             GL.attachShader(SHADER_PROGRAM[i], shader_fragment[i]);
             GL.linkProgram(SHADER_PROGRAM[i]);
 

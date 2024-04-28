@@ -2,7 +2,6 @@
 
 import {Spongebob} from "./object/character/spongebob.js";
 import {Skybox} from "./object/terrain/skybox.js";
-import {TexturedObject} from "./object/object.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -175,140 +174,30 @@ function main() {
     var VIEW_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    var spongebob = new Spongebob(Shader.TEXTURE);
-    // var land = new Skybox(Shader.TEXTURE);
+    var spongebob = new Spongebob(Shader.TEXTURE, 2);
+    var land = new Skybox(Shader.TEXTURE, 4);
 
-    var vertex_colored_object = [
+    var colored_object = [
     ];
 
     var textured_object = [
-        // land,
         spongebob,
     ];
 
-    var test_plane = [
-        // new TexturedObject(
-        //     PLANE.circle.createVertex(
-        //         {vT: true},
-        //         [0,0,0],
-        //         [],
-        //         [0,1,2]
-        //     ),
-        //     PLANE.circle.createFaces(0), Shader.TEXTURE),
-        // new TexturedObject(
-        //     PLANE.rectangle.createVertex(
-        //         {vT: true},
-        //         [0,20,0],
-        //         [20,-20,20],
-        //         [0,2,1]
-        //     ),
-        //     PLANE.rectangle.createFaces(0), Shader.TEXTURE),
-    ];
-
-    var test_quadric = [
-        // new TexturedObject(
-        //     QUADRIC.height_circle.createVertex(
-        //         {vT: true},
-        //     ),
-        //     QUADRIC.height_circle.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.cuboid.createVertex(
-        //         {vT: true},
-        //         // [],
-        //         // [],
-        //         // [],
-        //         // []
-        //     ),
-        //     QUADRIC.cuboid.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.ellipsoid.createVertex(
-        //         {vT: true},
-        //         [5,0,0],
-        //         [],
-        //         [0,1,2],
-        //         [],
-        //     ),
-        //     QUADRIC.ellipsoid.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.elliptic_cone.createVertex(
-        //         {vT: true},
-        //         [-5,0,0],
-        //         [],
-        //         [0,1,2],
-        //         [],
-        //     ),
-        //     QUADRIC.elliptic_cone.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.elliptic_paraboloid.createVertex(
-        //         {vT: true},
-        //         [0,5,0],
-        //         [],
-        //         [0,1,2],
-        //         [],
-        //     ),
-        //     QUADRIC.elliptic_paraboloid.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.donut.createVertex(
-        //         {vT: true},
-        //         [-5,5,0],
-        //         [],
-        //         [0,1,2],
-        //         [],
-        //     ),
-        //     QUADRIC.donut.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.height_saddle.createVertex(
-        //         {vT: true},
-        //         [5,-5,0],
-        //         [],
-        //         [0,1,2],
-        //         []
-        //     ),
-        //     QUADRIC.height_saddle.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.saddle.createVertex(
-        //         {vT: true},
-        //         [0,-5,0],
-        //         [],
-        //         [0,1,2],
-        //         []
-        //     ),
-        //     QUADRIC.saddle.createFaces(0), Shader.TEXTURE),
-        //
-        // new TexturedObject(
-        //     QUADRIC.cylinder.createVertex(
-        //         {vT: true},
-        //         [-5,-5,0],
-        //         [],
-        //         [0,1,2],
-        //         []
-        //     ),
-        //     QUADRIC.cylinder.createFaces(0), Shader.TEXTURE),
-    ];
-
     /*========================= SETUP ========================= */
-    for (let i = 0; i < vertex_colored_object.length; i++) {
-        vertex_colored_object[i].setup();
+    for (let i = 0; i < colored_object.length; i++) {
+        colored_object[i].setup();
     }
     for (let i = 0; i < textured_object.length; i++) {
         textured_object[i].setup();
     }
-    for (let i = 0; i < test_quadric.length; i++) {
-        test_quadric[i].setup();
-    }
-    for (let i = 0; i < test_plane.length; i++) {
-        test_plane[i].setup();
-    }
+
+    land.setup();
 
     /*========================= DRAWING ========================= */
-    GL.clearColor(0.5, 0.5, 0.5, 0.0);
+    var clear = [0.5, 0.5, 0.5, 0.0];
+    // clear = [0,0.68,0.88,0.0];
+    GL.clearColor(...clear);
 
     GL.enable(GL.DEPTH_TEST);
     GL.depthFunc(GL.LEQUAL);
@@ -353,29 +242,17 @@ function main() {
         LIBS.rotateX(temp, ALPHA);
         VIEW_MATRIX = LIBS.multiply(VIEW_MATRIX, temp);
 
-        // LIBS.rotateY(object.MODEL_MATRIX, THETA);
-        // LIBS.rotateX(object.MODEL_MATRIX, ALPHA);
-        // LIBS.setPosition(MODEL_MATRIX,pos_x,pos_y,pos_z);
-
         /*========================= RENDER ========================= */
 
-        GL.useProgram(Shader.VERTEX_COLOR);
-        for (let i = 0; i < vertex_colored_object.length; i++) {
-            vertex_colored_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        GL.useProgram(Shader.COLOR);
+        for (let i = 0; i < colored_object.length; i++) {
+            colored_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
         GL.useProgram(Shader.TEXTURE);
-        for (let i = 0; i < test_quadric.length; i++) {
-            test_quadric[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
-        }
-
+        land.render(VIEW_MATRIX, PROJECTION_MATRIX);
         for (let i = 0; i < textured_object.length; i++) {
             textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
-        }
-
-        // GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
-        for (let i = 0; i < test_plane.length; i++) {
-            test_plane[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
         /*========================= DATA ========================= */
