@@ -1,7 +1,8 @@
 /** @type {WebGLRenderingContext} */
 
-// import {Spongebob} from "./object/character/spongebob.js";
+import {Spongebob} from "./object/character/spongebob.js";
 import {Patrick} from "./object/character/patrick.js";
+import {rumahPatrick} from "./object/environtment/Rumah_Patrick.js";
 import {Skybox} from "./object/terrain/skybox.js";
 import {TexturedObject} from "./object/object.js";
 
@@ -176,20 +177,19 @@ function main() {
     var VIEW_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    // var spongebob = new Spongebob(Shader.TEXTURE);
+    var spongebob = new Spongebob(Shader.TEXTURE);
     var patrick = new Patrick(Shader.TEXTURE);
+    var RumahPatrick = new rumahPatrick(Shader.TEXTURE);
     var land = new Skybox(Shader.TEXTURE);
 
     var vertex_colored_object = [
     ];
 
     var textured_object = [
-        // land,
-        spongebob,
-    ];
-
-    var textured_object = [
-        patrick
+        land,
+        patrick,
+        RumahPatrick,
+        // spongebob,
     ];
 
     var test_plane = [
