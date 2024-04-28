@@ -118,22 +118,25 @@ class Spongebob extends TexturedObject{
 
     setup() {
         super.setup();
+        var blank = LIBS.get_I4();
         var f_rotate = LIBS.get_MRotate(0,0,0.9);
         this.animate([
-            null,
+            blank,
             LIBS.get_MRotate(0,0.3,-1.2),
-            LIBS.get_MRotate(-1,-0.3,0), null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
+            LIBS.get_MRotate(-1,-0.3,0), blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
             LIBS.get_MRotate(0,-Math.PI/4,0),
             LIBS.get_MRotate(-1,-Math.PI/4,1), LIBS.get_MRotate(0.25,0.5,-0.5),
             f_rotate, f_rotate, f_rotate,
             f_rotate, f_rotate, f_rotate,
             f_rotate, f_rotate, f_rotate,
             f_rotate, f_rotate, f_rotate,
-            null,
+            blank,
+            blank,blank,blank,
+            blank,blank,blank,
         ]);
     }
 
@@ -143,8 +146,10 @@ class Spongebob extends TexturedObject{
     speed = 3;
 
     run(dt){
+        var blank = LIBS.get_I4();
         var mov_a = Math. floor(Math. random()*2) - 2;
-        if (Math.abs(this.rot_angle)>= Math.PI/2) this.negate = !this.negate;
+        if (this.rot_angle >= Math.PI/2) this.negate = true;
+        if (this.rot_angle <= -Math.PI/2) this.negate = false;
         var rotate = Math.PI/2 * dt/1000 * (this.negate ? -1:1) * this.speed;
         this.rot_angle += rotate;
         var mov = Math.abs(rotate/20) * mov_a;
@@ -153,22 +158,22 @@ class Spongebob extends TexturedObject{
         this.animate([
             LIBS.get_MRotate(0, mov + rotate/10,0),
             LIBS.get_MRotate(rotate,0,0),
-            null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
+            blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
             LIBS.get_MRotate(0,0,rotate/3),
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
-            null, null, null,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
+            blank, blank, blank,
 
             LIBS.get_MRotate(-rotate/2,0,0),
-            null, null,
+            blank, blank,
             LIBS.get_MRotate(rotate/2,0,0),
-            null, null,
+            blank, blank,
         ]);
     }
 
