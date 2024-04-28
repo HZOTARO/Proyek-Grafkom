@@ -36,6 +36,9 @@ class Squidward extends ColoredObject {
         this.negate_arm = false;
         this.time_arm = 0;
 
+        this.negate_head = false;
+        this.time_head = 0;
+
         this.fr_thigh = new Squidward_single_leg(shader_program);
         this.fl_thigh = new Squidward_single_leg(shader_program);
         this.br_thigh = new Squidward_single_leg(shader_program);
@@ -141,6 +144,8 @@ class Squidward extends ColoredObject {
 
 
         LIBS.rotateY(this.r_arm.LOCAL_MATRIX, Math.PI);
+
+        LIBS.translate(this.LOCAL_MATRIX, 0, 20, -80);
     }
 
     rotate(){
@@ -230,6 +235,8 @@ class Squidward extends ColoredObject {
             this.fr_thigh.animate([move_matrix_fr_thigh]);
         }
 
+
+
     }
 
     // TAMBAH NEGATE UNTUK MASING2 THIGH, DIMULAI DARI WAKTU START
@@ -249,7 +256,7 @@ class Squidward_head extends ColoredObject {
     r_eye = null;
     nose = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         // Neck
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
@@ -300,7 +307,7 @@ class Squidward_eye extends ColoredObject {
 
 class Squidward_eyeball extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 1.0, 0.0, 0.0, 1.0);
+        super([], [], shader_program, 0.611764705882353, 0.11372549019607843, 0.0784313725490196, 1.0);
         this.faces.push(...QUADRIC.cuboid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cuboid.createVertex(
             {},
@@ -317,7 +324,7 @@ class Squidward_eyeball extends ColoredObject {
 class Squidward_nose extends ColoredObject {
     upper_nose = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
             {},
@@ -345,7 +352,7 @@ class Squidward_nose extends ColoredObject {
 
 class Squidward_upper_nose extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
 
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
@@ -371,7 +378,7 @@ class Squidward_skull extends ColoredObject {
     mouth = null;
     cheeks = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},
@@ -392,7 +399,7 @@ class Squidward_skull extends ColoredObject {
 
 class Squidward_cheeks extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.0 ,1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_circle.createVertex(
             {},
@@ -405,7 +412,7 @@ class Squidward_cheeks extends ColoredObject {
 }
 class Squidward_mouth extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
 
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
@@ -435,7 +442,7 @@ class Squidward_single_arm extends ColoredObject {
 
 class Squidward_sleeve extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.8, 0.4, 0.1, 1.0);
+        super([], [], shader_program, 0.6588235294117647, 0.5333333333333333, 0.10980392156862745, 1.0);
         this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_circle.createVertex(
             {},
@@ -453,7 +460,7 @@ class Squidward_sleeve extends ColoredObject {
 class Squidward_upper_arm extends ColoredObject {
     lower_arm = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_circle.createVertex(
             {},
@@ -480,8 +487,8 @@ class Squidward_upper_arm extends ColoredObject {
         // LIBS.translateX(this.lower_arm.LOCAL_MATRIX, -1);
         // LIBS.translate(this.lower_arm.LOCAL_MATRIX, 13.0, -30.45, 0);
         // LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/128);
-        // LIBS.rotateZ(this.lower_arm.LOCAL_MATRIX, (-Math.PI/4 - Math.PI/8));
-        // LIBS.translate(this.lower_arm.LOCAL_MATRIX, -12.75, 8.7, 0);
+        LIBS.rotateZ(this.lower_arm.LOCAL_MATRIX, (-Math.PI/4 - Math.PI/8));
+        LIBS.translate(this.lower_arm.LOCAL_MATRIX, -14.2, 9.3, 0);
         //
         // LIBS.translate(this.lower_arm.LOCAL_MATRIX, 12.75, -8.7, 0);
         // LIBS.rotateZ(this.lower_arm.LOCAL_MATRIX, Math.PI/4 + Math.PI/8);
@@ -491,7 +498,7 @@ class Squidward_upper_arm extends ColoredObject {
 class Squidward_lower_arm extends ColoredObject {
     hand = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_circle.createVertex(
             {},
@@ -513,7 +520,7 @@ class Squidward_lower_arm extends ColoredObject {
 
 class Squidward_hand extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},
@@ -538,20 +545,40 @@ class Squidward_hand extends ColoredObject {
 class Squidward_torso extends ColoredObject {
     hip = null;
     upper_stomach = null;
+    collar = null;
     constructor(shader_program) {
         super([], [], shader_program, 1.0, 1.0, 1.0);
         this.hip = new Squidward_hip(shader_program);
         this.upper_stomach = new Squidward_upper_stomach(shader_program);
+        this.collar = new Squidward_collar(shader_program);
 
         this.childs = [
-            this.hip, this.upper_stomach
+            this.hip, this.upper_stomach, this.collar
         ]
+    }
+}
+
+class Squidward_collar extends ColoredObject {
+    constructor(shader_program) {
+        super([], [], shader_program, 0.6588235294117647, 0.5333333333333333, 0.10980392156862745, 1.0);
+        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.donut.createVertex(
+            {},
+            [0, 32.7, 0],
+            [1.6, 2, 1.6],
+            [],
+            [],
+        ));
+        LIBS.translate(0, -32.7, 0);
+        LIBS.rotateX(this.LOCAL_MATRIX, Math.PI/32);
+        LIBS.translate(0, 32.7, 0);
+        LIBS.translateZ(this.LOCAL_MATRIX, -3.2);
     }
 }
 
 class Squidward_upper_stomach extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0.8, 0.4, 0.1, 1.0);
+        super([], [], shader_program, 0.6588235294117647, 0.5333333333333333, 0.10980392156862745, 1.0);
         this.faces.push(...QUADRIC.elliptic_paraboloid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.elliptic_paraboloid.createVertex(
             {},
@@ -565,7 +592,7 @@ class Squidward_upper_stomach extends ColoredObject {
 
 class Squidward_hip extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},
@@ -595,7 +622,7 @@ class Squidward_single_leg extends ColoredObject {
 class Squidward_thigh extends ColoredObject {
     tentacle = null;
     constructor(shader_program) {
-        super([], [], shader_program, 0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_saddle.createVertex(
             {},
@@ -615,7 +642,7 @@ class Squidward_thigh extends ColoredObject {
 
 class Squidward_tentacles extends ColoredObject {
     constructor(shader_program) {
-        super([], [], shader_program, 0, 1.0, 1.0, 1.0);
+        super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},

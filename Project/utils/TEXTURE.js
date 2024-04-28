@@ -9,6 +9,9 @@ var TEXTURE = {
             "sand",
             "cubemap",
             "sketch",
+            "squidward_house",
+            "glass",
+            "brown"
         ];
         var textures = [];
         for (const name of src) {

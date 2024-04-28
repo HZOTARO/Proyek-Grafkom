@@ -3,6 +3,7 @@
 import {Squidward_house} from "./object/environment/squidward_house.js";
 import {Squidward} from "./object/character/squidward.js";
 import {Skybox} from "./object/terrain/skybox.js";
+import {Flower} from "./object/environment/flower.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -181,16 +182,22 @@ function main() {
 
     /*========================= OBJECTS ========================= */
     var squidward = new Squidward(Shader.COLOR);
-    var squidward_house = new Squidward_house(Shader.COLOR);
+    var squidward_house = new Squidward_house(Shader.TEXTURE);
+    var flower = new Flower(Shader.COLOR);
     var land = new Skybox(Shader.TEXTURE);
 
     var colored_object = [
         // squidward,
-        squidward_house
+        squidward,
+        flower
     ];
     var vertex_colored_object = [
         // spongebob,
     ];
+
+    var textured_object = [
+        squidward_house
+    ]
 
     var test_plane = [
         // new TexturedObject(
@@ -312,6 +319,9 @@ function main() {
     for (let i = 0; i < test_plane.length; i++) {
         test_plane[i].setup();
     }
+    for (let i = 0; i < textured_object.length; i++) {
+        textured_object[i].setup();
+    }
     land.setup();
 
     /*========================= DRAWING ========================= */
@@ -378,6 +388,10 @@ function main() {
         GL.useProgram(Shader.TEXTURE);
         for (let i = 0; i < test_quadric.length; i++) {
             test_quadric[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
+
+        for (let i = 0; i < textured_object.length; i++) {
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
         for (let i = 0; i < test_plane.length; i++) {
