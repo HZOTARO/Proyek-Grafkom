@@ -12,6 +12,9 @@ class Squidward extends ColoredObject {
     head = null;
 
     time_per_frame = 0.03;
+
+    random_x = 0.01;
+    random_z = 0.01;
     
     startBl_thigh = false;
     startFl_thigh = false;
@@ -38,6 +41,9 @@ class Squidward extends ColoredObject {
 
         this.negate_head = false;
         this.time_head = 0;
+
+        this.negate_rotate = false;
+        this.time_rotate = 0;
 
         this.fr_thigh = new Squidward_single_leg(shader_program);
         this.fl_thigh = new Squidward_single_leg(shader_program);
@@ -149,6 +155,32 @@ class Squidward extends ColoredObject {
     }
 
     rotate() {
+        if (this.time_rotate > 6.9 || this.time_head < -6.9) {
+            this.random_x = (Math.random() * 2 - 1);
+            this.random_z = (Math.random() * 2 - 1);
+        }
+
+        console.log(this.time_head);
+
+
+        var random_translate = LIBS.get_MTranslate(this.random_x * 0.5, 0, this.random_z * 0.5);
+
+        var magnitude = Math.sqrt(this.random_x * this.random_x + this.random_z * this.random_z);
+        var normalX = this.random_x / magnitude;
+        var normalZ = this.random_z / magnitude;
+
+        var rotationAngle = Math.atan2(normalX, normalZ);
+
+        if (rotationAngle < 0) {
+            rotationAngle += 2 * Math.PI;
+        }
+
+
+
+        if (this.time_rotate > 7) this.negate_rotate = false;
+        else if (this.time_rotate < -7) this.negate_rotate = true;
+        this.negate_rotate ? this.time_rotate += 0.1 : this.time_rotate -= 0.1;
+
         if (this.time_head > 4) this.negate_head = false;
         else if (this.time_head < -4) this.negate_head = true;
         this.negate_head ? this.time_head += 0.1 : this.time_head -= 0.1;
@@ -242,8 +274,11 @@ class Squidward extends ColoredObject {
             this.fr_thigh.animate([move_matrix_fr_thigh]);
         }
 
-
-
+        if (this.time_rotate > 6.9 || this.time_rotate < -6.9) {
+            LIBS.rotateY(this.LOCAL_MATRIX, rotationAngle);
+        }
+        console.log(rotationAngle);
+        this.animate([random_translate]);
     }
 
     // TAMBAH NEGATE UNTUK MASING2 THIGH, DIMULAI DARI WAKTU START
@@ -262,6 +297,7 @@ class Squidward_head extends ColoredObject {
     l_eye = null;
     r_eye = null;
     nose = null;
+    hat = null;
     constructor(shader_program) {
         super([], [], shader_program, 0.6941176470588235, 0.8392156862745098, 0.7725490196078432, 1.0);
         // Neck
@@ -278,9 +314,10 @@ class Squidward_head extends ColoredObject {
         this.l_eye = new Squidward_eye(shader_program);
         this.r_eye = new Squidward_eye(shader_program)
         this.nose = new Squidward_nose(shader_program);
+        this.hat = new Squidward_hat(shader_program);
 
         this.childs = [
-            this.skull, this.l_eye, this.r_eye, this.nose
+            this.skull, this.l_eye, this.r_eye, this.nose, this.hat
         ]
 
         LIBS.translateX(this.r_eye.LOCAL_MATRIX, 3.5);
@@ -658,5 +695,88 @@ class Squidward_tentacles extends ColoredObject {
             [],
             [0, Math.PI/2]
         ));
+    }
+}
+
+class Squidward_hat extends ColoredObject {
+    tambahan_hat = null;
+    constructor(shader_program) {
+        super([], [], shader_program, 1.0, 1.0, 1.0, 1.0);
+        var control_points = [
+            [-1, 0, 0],
+            [-1, 3, 1],
+            [-0.5, 3, 0],
+            [-0.1, 3, 0],
+            [0, 3, 0],
+            [0.1, 3, 0],
+            [0.5, 3, 0],
+            [1, 3, 1],
+            [1, 0, 1],
+        ]
+
+        this.faces.push(...CURVE.createVase(
+            control_points, 30, 60, 0, {},
+            [0, 50, -1.4],
+            [2, 3, 2],
+            [],
+        ).faces);
+        this.vertex.push(...CURVE.createVase(
+            control_points, 30, 60, 0, {},
+            [0, 50, -1.4],
+            [2, 3, 2],
+            [],
+        ).vertex);
+
+        this.tambahan_hat = new Squidward_tambahan_hat(shader_program);
+        this.childs = [
+            this.tambahan_hat
+        ]
+    }
+}
+
+class Squidward_tambahan_hat extends ColoredObject {
+    penutup = null;
+    constructor(shader_program) {
+        super([], [], shader_program, 0.0, 0.0, 0.0, 0.0);
+        var control_points = [
+            [0, 1.5, 0],
+            [0, 0, -4],
+            [0, -1.5, -0.9]
+        ]
+        this.faces.push(...CURVE.createCurvedCylinder(
+            control_points, 30, 60, 0, {},
+            [0, 51, -1.4],
+            [2, 0.7, 2],
+            [0, 2, 1],
+        ).faces);
+        this.vertex.push(...CURVE.createCurvedCylinder(
+            control_points, 30, 60, 0, {},
+            [0, 51, -1.4],
+            [2, 0.7, 2],
+            [0, 2, 1],
+        ).vertex);
+
+        this.penutup = new Squidward_penutup_hat(shader_program);
+
+        this.childs = [
+            this.penutup
+        ]
+
+        LIBS.translateZ(this.LOCAL_MATRIX, 3);
+    }
+}
+
+class Squidward_penutup_hat extends ColoredObject {
+    constructor(shader_program) {
+        super([],[], shader_program, 0.0, 0.0, 0.0);
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {},
+            [0, 50.5, 1],
+            [2, 0.7, 0.05],
+            [],
+            []
+        ));
+        // LIBS.translateZ(this.LOCAL_MATRIX, 2);
     }
 }
