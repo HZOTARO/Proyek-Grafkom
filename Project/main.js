@@ -1,8 +1,12 @@
 /** @type {WebGLRenderingContext} */
 
 import {Spongebob} from "./object/character/spongebob.js";
-import {Skybox} from "./object/environtment/skybox.js";
-import {Spongebob_house} from "./object/environtment/terrain/Spongebob_house.js";
+import {Skybox} from "./object/environment/skybox.js";
+import {Spongebob_house} from "./object/environment/terrain/Spongebob_house.js";
+import {Squidward_house} from "./object/environment/terrain/squidward_house.js";
+import {Squidward} from "./object/character/squidward.js";
+import {Skybox} from "./object/environment/skybox.js";
+import {Flower} from "./object/environment/terrain/flower.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -177,13 +181,19 @@ function main() {
     /*========================= OBJECTS ========================= */
     var world = new Skybox(Shader.TEXTURE);
     var spongebob = new Spongebob(Shader.TEXTURE, 5);
-    var s_house = new Spongebob_house(Shader.TEXTURE, 8);
+    var squidward = new Squidward(Shader.COLOR);
+    var spongebob_house = new Spongebob_house(Shader.TEXTURE, 8);
+    var squidward_house = new Squidward_house(Shader.TEXTURE);
+    var flower = new Flower(Shader.COLOR);
 
     var colored_object = [
+        squidward,
+        flower,
     ];
 
     var textured_object = [
-        s_house,
+        spongebob_house,
+        squidward_house,
     ];
 
     var character_object = [

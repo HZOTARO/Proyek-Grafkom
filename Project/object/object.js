@@ -21,6 +21,7 @@ class BaseObject{
     constructor(vertex, faces, shader_program) {
         this.vertex = vertex;
         this.faces = faces;
+
         //Uniform
         this._PMatrix = GL.getUniformLocation(shader_program, "PMatrix");
         this._VMatrix = GL.getUniformLocation(shader_program, "VMatrix");

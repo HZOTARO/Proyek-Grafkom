@@ -99,7 +99,7 @@ var CURVE = {
         var step = Math.PI / intensity * 2;
 
         for (let i = 0; i < curve.length; i++) {
-                var core = curve[i];
+            var core = curve[i];
             for (let j = 0; j < Math.PI * 2 + 0.1; j+=step) {
                 var pos = [
                     core[0] + Math.cos(j),

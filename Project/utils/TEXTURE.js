@@ -8,8 +8,10 @@ var TEXTURE = {
             "dome",
             "spongebob",
             "patrick",
-            "squidward",
-            "spongebob_house"
+            "spongebob_house",
+            "squidward_house",
+            "glass",
+            "brown"
         ];
         var textures = [];
         for (const name of src) {
