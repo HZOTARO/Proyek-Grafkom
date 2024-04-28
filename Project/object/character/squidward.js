@@ -12,6 +12,9 @@ class Squidward extends ColoredObject {
     head = null;
 
     time_per_frame = 0.03;
+
+    random_x = 0.51361467;
+    random_z = 0.2258258;
     
     startBl_thigh = false;
     startFl_thigh = false;
@@ -38,6 +41,9 @@ class Squidward extends ColoredObject {
 
         this.negate_head = false;
         this.time_head = 0;
+
+        this.negate_rotate = false;
+        this.time_rotate = 0;
 
         this.fr_thigh = new Squidward_single_leg(shader_program);
         this.fl_thigh = new Squidward_single_leg(shader_program);
@@ -149,6 +155,31 @@ class Squidward extends ColoredObject {
     }
 
     rotate() {
+        if (this.time_rotate > 9.9 || this.time_head < -9.9) {
+            this.random_x = (Math.random() * 2 - 1);
+            this.random_z = (Math.random() * 2 - 1);
+        }
+
+        console.log(this.time_head);
+
+
+        var random_translate = LIBS.get_MTranslate(this.random_x, 0, this.random_z);
+
+        var magnitude = Math.sqrt(this.random_x * this.random_x + this.random_z * this.random_z);
+        var normalX = this.random_x / magnitude;
+        var normalZ = this.random_z / magnitude;
+
+        var rotationAngle = Math.atan2(normalZ, normalX);
+
+        // Mengubah sudut rotasi ke dalam rentang [0, 2*PI]
+        if (rotationAngle < 0) {
+            rotationAngle += 2 * Math.PI;
+        }
+
+        if (this.time_rotate > 10) this.negate_rotate = false;
+        else if (this.time_rotate < -10) this.negate_rotate = true;
+        this.negate_rotate ? this.time_rotate += 0.1 : this.time_rotate -= 0.1;
+
         if (this.time_head > 4) this.negate_head = false;
         else if (this.time_head < -4) this.negate_head = true;
         this.negate_head ? this.time_head += 0.1 : this.time_head -= 0.1;
@@ -243,8 +274,11 @@ class Squidward extends ColoredObject {
             this.fr_thigh.animate([move_matrix_fr_thigh]);
         }
 
-
-
+        if (this.time_rotate > 9.9 || this.time_rotate < -9.9) {
+            LIBS.rotateY(this.LOCAL_MATRIX, rotationAngle);
+        }
+        console.log(rotationAngle);
+        this.animate([random_translate]);
     }
 
     // TAMBAH NEGATE UNTUK MASING2 THIGH, DIMULAI DARI WAKTU START
