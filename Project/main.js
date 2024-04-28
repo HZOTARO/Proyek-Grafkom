@@ -180,7 +180,7 @@ function main() {
 
     var spongebob = new Spongebob(Shader.TEXTURE, 5);
     LIBS.scale(spongebob.WORLD_MATRIX,0.1,0.1,0.1);
-    LIBS.translate(spongebob.WORLD_MATRIX,35,-18,25);
+    LIBS.translate(spongebob.WORLD_MATRIX,20,-18,25);
     spongebob.speed = 0.05;
 
     var patrick = new Patrick(Shader.TEXTURE);
@@ -189,7 +189,7 @@ function main() {
 
     var squidward = new Squidward(Shader.COLOR);
     LIBS.scale(squidward.WORLD_MATRIX,0.1,0.1,0.1);
-    LIBS.translate(squidward.WORLD_MATRIX,0,-2,20);
+    LIBS.translate(squidward.WORLD_MATRIX,0,-2,30);
 
     var spongebob_house = new Spongebob_house(Shader.TEXTURE, 7);
     LIBS.scale(spongebob_house.WORLD_MATRIX,0.14,0.14,0.14);
