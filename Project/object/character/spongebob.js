@@ -2,14 +2,31 @@ import {TexturedObject} from "../object.js";
 export {Spongebob}
 
 class Spongebob extends TexturedObject{
-    time = 0;
-    negate = false;
+    texture = null;
     l_arm = null;
     r_arm = null;
     l_thigh = null;
     r_thigh = null;
-    constructor(shader_program) {
+    jelly_net = null;
+    constructor(shader_program, texture) {
         super([], [], shader_program);
+        this.texture = texture;
+
+        var curve = CURVE.createVase(
+            [
+                [0,1,0],
+                [1,1,1],
+                [1,0,1],
+                [0.5,-1,0.5],
+            ],40, 36,this.vertex.length/5,
+            {vT: true, t_s:[1/12,11/12],t_e:[1/12,11/12]},
+            [0,1,6.5],
+            [1.25,1.25,5],
+            [0,2,1]
+        );
+        this.faces.push(...curve.faces);
+        this.vertex.push(...curve.vertex);
+
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {vT: true},
@@ -31,24 +48,50 @@ class Spongebob extends TexturedObject{
             [9,3,3.5])
         );
 
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
-        // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vT: true},
-        //     [-3.2,3.9,4],
-        //     [3.1,3.1,3])
-        // );
-        //
-        // this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
-        // this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-        //     {vT: true},
-        //     [3.3,3.9,4],
-        //     [3.1,3.1,3])
-        // );
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[2/3, 5/6]},
+            [-3.3,4,4],
+            [3.3,3.6,1],
+            [],
+            [-Math.PI/2,0]
+            )
+        );
+
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {vT: true, t_s:[2/3, 5/6]},
+            [3.5,3.9,4],
+            [3.4,3.5,1],
+            [],
+            [-Math.PI/2,0]
+            )
+        );
+
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+                {vT: true, t_s:[2/3, 5/6]},
+                [-6,1.5,4],
+                [2,1.5,1.5],
+                [],
+                [Math.PI/2,0]
+            )
+        );
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+                {vT: true, t_s:[1,5/6], t_e:[2/3, 1]},
+                [6.35,1.3,4],
+                [2.3,1.5,1.5],
+                [],
+                [-Math.PI/2,0]
+            )
+        );
 
         this.l_arm = new Spongebob_u_arm(shader_program);
         this.r_arm = new Spongebob_u_arm(shader_program);
         this.l_thigh = new Spongebob_thigh(shader_program);
         this.r_thigh = new Spongebob_thigh(shader_program);
+        this.jelly_net = new Jellyfish_Net(shader_program)
 
         this.childs = [
             this.l_arm,
@@ -57,32 +100,81 @@ class Spongebob extends TexturedObject{
             this.r_thigh,
         ];
 
-        LIBS.translate(this.l_arm.LOCAL_MATRIX,-9.8,-5,0);
-        LIBS.translate(this.r_arm.LOCAL_MATRIX,9.8,-5,0);
-        LIBS.rotateZ(this.l_arm.LOCAL_MATRIX,-Math.PI/2);
-        LIBS.rotateZ(this.r_arm.LOCAL_MATRIX,Math.PI/2);
+        this.r_arm.l_arm.hand.childs.push(this.jelly_net);
+        LIBS.translate(this.jelly_net.LOCAL_MATRIX,0.8,-1,0);
+        LIBS.rotate(this.jelly_net.LOCAL_MATRIX,0,-0.1,-Math.PI/2);
 
-        LIBS.translate(this.l_thigh.LOCAL_MATRIX,-4.75,-12,0);
-        LIBS.translate(this.r_thigh.LOCAL_MATRIX,4.75,-12,0);
+        LIBS.translate(this.r_arm.LOCAL_MATRIX,-9.8,-5,0);
+        LIBS.translate(this.l_arm.LOCAL_MATRIX,9.8,-5,0);
+        LIBS.rotateZ(this.r_arm.LOCAL_MATRIX,-Math.PI/2);
+        LIBS.rotateZ(this.l_arm.LOCAL_MATRIX,Math.PI/2);
 
-        LIBS.translate(this.LOCAL_MATRIX,0,5,0);
+        LIBS.translate(this.r_thigh.LOCAL_MATRIX,-4.75,-12,0);
+        LIBS.translate(this.l_thigh.LOCAL_MATRIX,4.75,-12,0);
+
+        LIBS.translate(this.LOCAL_MATRIX,0,2.5,0);
         LIBS.translate(this.WORLD_MATRIX,0,20,0);
     }
 
-    rotate(dt){
-        if (this.time > 200) this.negate = true;
-        else if (this.time < -200) this.negate = false;
-        this.negate ? this.time -= dt : this.time += dt;
-        var translate, scale;
-        this.negate ? translate = -1 : translate = 1;
-        this.negate ? scale = 100/99 : scale = 99/100;
-        var arr = [LIBS.get_MScale(scale,scale,scale), LIBS.get_MTranslate(0,translate,0)];
-        this.animate(arr);
+    setup() {
+        super.setup();
+        var f_rotate = LIBS.get_MRotate(0,0,0.9);
+        this.animate([
+            null,
+            LIBS.get_MRotate(0,0.3,-1.2),
+            LIBS.get_MRotate(-1,-0.3,0), null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            LIBS.get_MRotate(0,-Math.PI/4,0),
+            LIBS.get_MRotate(-1,-Math.PI/4,1), LIBS.get_MRotate(0.25,0.5,-0.5),
+            f_rotate, f_rotate, f_rotate,
+            f_rotate, f_rotate, f_rotate,
+            f_rotate, f_rotate, f_rotate,
+            f_rotate, f_rotate, f_rotate,
+            null,
+        ]);
+    }
+
+    negate = false;
+    rot_angle = 0;
+    angle = Math.PI/2;
+    speed = 3;
+
+    run(dt){
+        var mov_a = Math. floor(Math. random()*2) - 2;
+        if (Math.abs(this.rot_angle)>= Math.PI/2) this.negate = !this.negate;
+        var rotate = Math.PI/2 * dt/1000 * (this.negate ? -1:1) * this.speed;
+        this.rot_angle += rotate;
+        var mov = Math.abs(rotate/20) * mov_a;
+        this.angle += mov;
+        LIBS.translate(this.WORLD_MATRIX, -Math.cos(this.angle) * 0.5,0, Math.sin(this.angle) * 0.5);
+        this.animate([
+            LIBS.get_MRotate(0, mov + rotate/10,0),
+            LIBS.get_MRotate(rotate,0,0),
+            null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            LIBS.get_MRotate(0,0,rotate/3),
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+
+            LIBS.get_MRotate(-rotate/2,0,0),
+            null, null,
+            LIBS.get_MRotate(rotate/2,0,0),
+            null, null,
+        ]);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX, dt){
-        GL.bindTexture(GL.TEXTURE_2D, Texture[2]);
-        this.rotate(dt);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[this.texture]);
+        this.run(dt);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -278,9 +370,9 @@ class Spongebob_thigh extends TexturedObject{
         super([], [], shader_program);
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
-            {vT: true},
-            [],
-            [0.1,0.1,0.1])
+            {vT: true, t_s:[3/12,11/12], t_e:[3/12,11/12]},
+            [0,1.5,0],
+            [1.7,2,2])
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
@@ -317,7 +409,7 @@ class Spongebob_leg extends TexturedObject{
         );
         this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.cylinder.createVertex(
-            {vT: true, t_s:[1/12,11/12], t_e:[1/12,11/12]},
+            {vT: true, t_s:[0.34,0.67], t_e:[0.49, 1]},
             [0,-2.4,0],
             [0.6,2.4,0.6])
         );
@@ -375,5 +467,85 @@ class Spongebob_shoe extends TexturedObject{
             [0,-0.5,0],
             [0.8,0.8,0.8]
         ));
+    }
+}
+
+class Jellyfish_Net extends TexturedObject{
+    constructor(shader_program) {
+        super([], [], shader_program);
+
+        var control = [
+            [
+                [-15,10,0],
+                [-5,-10,0],
+                [5,-10,0],
+                [15,10,0]
+            ],
+            [
+                [-10,10,-10],
+                [-5,-10,-5],
+                [5,-10,5],
+                [10,10,10]
+            ],
+            [
+                [-10,10,10],
+                [-5,-10,5],
+                [5,-10,-5],
+                [10,10,-10]
+            ],
+            [
+                [0,10,-15],
+                [0,-10,-5],
+                [0,-10,5],
+                [0,10,15]
+            ]
+        ];
+
+        var curve;
+
+        for (let i = 0; i < 4; i++) {
+            curve = CURVE.createCurvedCylinder(
+                [
+                    ...control[i]
+                ],25, 10,this.vertex.length/5,
+                {vT: true, t_s:[2/12,9/12], t_e:[2/12,9/12]},
+                [0,-3,10],
+                [0.2,0.3,0.2],
+                []
+            );
+            this.faces.push(...curve.faces);
+            this.vertex.push(...curve.vertex);
+
+            this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
+            this.vertex.push(...QUADRIC.donut.createVertex(
+                {vT: true, t_s:[2/12,9/12], t_e:[2/12,9/12]},
+                [0,-4+0.6+i*0.85,10],
+                [0.45*(i+3),0.45*(i+3),0.45*(i+3)],
+                [],
+                [],
+                0.3 / (i+3)
+                )
+            );
+
+            this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
+            this.vertex.push(...QUADRIC.cylinder.createVertex(
+                    {vT: true, t_s:[0.51,0.67], t_e:[0.66,1]},
+                    [0,0,5.8-i*3],
+                    [0.3,0.3,1.5],
+                    [0,2,1]
+                )
+            );
+        }
+
+        this.faces.push(...QUADRIC.donut.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.donut.createVertex(
+                {vT: true, t_s:[7/12,10/12], t_e:[7/12,10/12]},
+                [0,0,10],
+                [2.9,2.9,2.9],
+                [],
+                [],
+                0.125
+            )
+        );
     }
 }
