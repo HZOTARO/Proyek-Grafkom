@@ -9,6 +9,12 @@ var TEXTURE = {
             "sand",
             "cubemap",
             "sketch",
+            "celana_patrick",
+            "rumah_patrick",
+            "skin_patrick",
+            "mata_patrick",
+            "antenna",
+            "topi_patrick",
         ];
         var textures = [];
         for (const name of src) {
