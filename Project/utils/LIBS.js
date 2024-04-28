@@ -50,6 +50,42 @@ var LIBS = {
         ];
     },
 
+    get_MRotateX: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            1, 0, 0, 0,
+            0, cos, -sin, 0,
+            0, sin, cos, 0,
+            0, 0, 0, 1
+        ];
+    },
+
+    get_MRotateY: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            cos, 0, sin, 0,
+            0, 1, 0, 0,
+            -sin, 0, cos, 0,
+            0, 0, 0, 1
+        ];
+    },
+    
+    get_MRotateZ: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            cos, -sin, 0, 0,
+            sin, cos, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ];
+    },
+
     rotate: function (m, x_angle, y_angle, z_angle) {
         this.rotateX(m, x_angle);
         this.rotateY(m, y_angle);
