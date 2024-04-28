@@ -148,7 +148,11 @@ class Squidward extends ColoredObject {
         LIBS.translate(this.LOCAL_MATRIX, 0, 20, -80);
     }
 
-    rotate(){
+    rotate() {
+        if (this.time_head > 4) this.negate_head = false;
+        else if (this.time_head < -4) this.negate_head = true;
+        this.negate_head ? this.time_head += 0.1 : this.time_head -= 0.1;
+
         if (this.time_br > 9) this.negate_br = false;
         else if (this.time_br < 0) this.negate_br = true;
         this.negate_br ? this.time_br += 0.1 : this.time_br -= 0.1;
@@ -187,6 +191,10 @@ class Squidward extends ColoredObject {
 
         var matrix_lower_arm;
 
+        var matrix_rotate_head;
+
+        this.negate_head ? matrix_rotate_head = LIBS.get_MRotateY((Math.PI/8) * this.time_per_frame) : matrix_rotate_head = LIBS.get_MRotateY((-Math.PI/8) * this.time_per_frame);
+
         this.negate_br ?  matrix_br_thigh = this.br_thigh_matrix: matrix_br_thigh = this.br_thigh_matrix_inverse;
         this.negate_bl ? matrix_bl_thigh = this.bl_thigh_matrix : matrix_bl_thigh = this.bl_thigh_matrix_inverse;
         this.negate_fl ? matrix_fl_thigh = this.fl_thigh_matrix : matrix_fl_thigh = this.fl_thigh_matrix_inverse;
@@ -200,7 +208,7 @@ class Squidward extends ColoredObject {
         this.negate_fl ? move_matrix_fl_thigh = LIBS.get_MTranslate(0.17, 0, 0) : move_matrix_fl_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
         this.negate_fr ? move_matrix_fr_thigh = LIBS.get_MTranslate(0.17, 0,  0) : move_matrix_fr_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
 
-        this.animate([LIBS.get_MRotateY(Math.PI/2 * this.time_per_frame)]);
+        this.head.animate([matrix_rotate_head]);
 
         this.br_thigh.animate([matrix_br_thigh]);
         this.br_thigh.animate([move_matrix_br_thigh]);
