@@ -11,8 +11,31 @@ class Squidward extends ColoredObject {
     torso = null;
     head = null;
 
+    time_per_frame = 0.03;
+    
+    startBl_thigh = false;
+    startFl_thigh = false;
+    startFr_thigh = false;
+
+    br_thigh_matrix = null;
+
     constructor(shader_program) {
         super([], [], shader_program, 1.0, 1.0, 1.0, 1.0);
+        this.negate_br = false;
+        this.time_br = 0;
+
+        this.negate_bl = false;
+        this.time_bl = 0;
+
+        this.negate_fl = false;
+        this.time_fl = 0;
+
+        this.negate_fr = false;
+        this.time_fr = 0;
+
+        this.negate_arm = false;
+        this.time_arm = 0;
+
         this.fr_thigh = new Squidward_single_leg(shader_program);
         this.fl_thigh = new Squidward_single_leg(shader_program);
         this.br_thigh = new Squidward_single_leg(shader_program);
@@ -33,16 +56,189 @@ class Squidward extends ColoredObject {
 
         LIBS.translate(this.br_thigh.LOCAL_MATRIX, -1, 0, -1);
         LIBS.translate(this.bl_thigh.LOCAL_MATRIX, -3, 0, -1);
-        LIBS.translate(this.fr_thigh.LOCAL_MATRIX, -1, 0, 1);
         LIBS.translate(this.fl_thigh.LOCAL_MATRIX, -3, 0, 1);
+        LIBS.translate(this.fr_thigh.LOCAL_MATRIX, -1, 0, 1);
+
+
+        this.br_thigh_matrix = LIBS.get_I4(); // Matrix identitas
+        LIBS.translate(this.br_thigh_matrix, 1 * this.time_per_frame, 0, 1 * this.time_per_frame);
+        LIBS.rotateY(this.br_thigh_matrix, -Math.PI/4 * this.time_per_frame);
+        LIBS.rotateZ(this.br_thigh_matrix, Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.br_thigh_matrix, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.br_thigh_matrix, -1 * this.time_per_frame, 0, -1 * this.time_per_frame);
+
+        this.br_thigh_matrix_inverse = LIBS.get_I4();
+        LIBS.translate(this.br_thigh_matrix_inverse, 1 * this.time_per_frame, 0, 1 * this.time_per_frame);
+        LIBS.rotateY(this.br_thigh_matrix_inverse, -Math.PI/4 * this.time_per_frame);
+        LIBS.rotateZ(this.br_thigh_matrix_inverse, -Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.br_thigh_matrix_inverse, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.br_thigh_matrix_inverse, -1 * this.time_per_frame, 0, -1 * this.time_per_frame);
+
+        this.bl_thigh_matrix = LIBS.get_I4();
+        LIBS.translate(this.bl_thigh_matrix, 3 * this.time_per_frame, 0, 1 * this.time_per_frame);
+        LIBS.rotateY(this.bl_thigh_matrix, -(Math.PI/4) * this.time_per_frame);
+        LIBS.rotateZ(this.bl_thigh_matrix, Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.bl_thigh_matrix, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.bl_thigh_matrix, -3 * this.time_per_frame, 0, -1 * this.time_per_frame);
+
+        this.bl_thigh_matrix_inverse = LIBS.get_I4();
+        LIBS.translate(this.bl_thigh_matrix_inverse, 3 * this.time_per_frame, 0, 1 * this.time_per_frame);
+        LIBS.rotateY(this.bl_thigh_matrix_inverse, -(Math.PI/4) * this.time_per_frame);
+        LIBS.rotateZ(this.bl_thigh_matrix_inverse, -Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.bl_thigh_matrix_inverse, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.bl_thigh_matrix_inverse, -3 * this.time_per_frame, 0, -1 * this.time_per_frame);
+
+        this.fl_thigh_matrix = LIBS.get_I4();
+        LIBS.translate(this.fl_thigh_matrix, 3 * this.time_per_frame, 0, -1 * this.time_per_frame);
+        LIBS.rotateY(this.fl_thigh_matrix, -(Math.PI/4) * this.time_per_frame);
+        LIBS.rotateZ(this.fl_thigh_matrix, Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.fl_thigh_matrix, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.fl_thigh_matrix, -3 * this.time_per_frame, 0, 1 * this.time_per_frame);
+
+        this.fl_thigh_matrix_inverse = LIBS.get_I4();
+        LIBS.translate(this.fl_thigh_matrix_inverse, 3 * this.time_per_frame, 0, -1 * this.time_per_frame);
+        LIBS.rotateY(this.fl_thigh_matrix_inverse, -(Math.PI/4) * this.time_per_frame);
+        LIBS.rotateZ(this.fl_thigh_matrix_inverse, -Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.fl_thigh_matrix_inverse, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.fl_thigh_matrix_inverse, -3 * this.time_per_frame, 0, 1 * this.time_per_frame);
+
+        this.fr_thigh_matrix = LIBS.get_I4();
+        LIBS.translate(this.fr_thigh_matrix, 1 * this.time_per_frame, 0, -1 * this.time_per_frame);
+        LIBS.rotateY(this.fr_thigh_matrix, -Math.PI/4 * this.time_per_frame);
+        LIBS.rotateZ(this.fr_thigh_matrix, Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.fr_thigh_matrix, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.fr_thigh_matrix, -1 * this.time_per_frame, 0, 1 * this.time_per_frame);
+
+        this.fr_thigh_matrix_inverse = LIBS.get_I4();
+        LIBS.translate(this.fr_thigh_matrix_inverse, 1 * this.time_per_frame, 0, -1 * this.time_per_frame);
+        LIBS.rotateY(this.fr_thigh_matrix_inverse, -(Math.PI/4) * this.time_per_frame);
+        LIBS.rotateZ(this.fr_thigh_matrix_inverse, -Math.PI/8 * this.time_per_frame);
+        LIBS.rotateY(this.fr_thigh_matrix_inverse, Math.PI/4 * this.time_per_frame);
+        LIBS.translate(this.fr_thigh_matrix_inverse, -1 * this.time_per_frame, 0, 1 * this.time_per_frame);
+
+        this.lower_arm_matrix = LIBS.get_I4();
+        // LIBS.translate(this.lower_arm_matrix, -5 * this.time_per_frame, 0, 0);
+
+        // LIBS.translate(this.lower_arm_matrix, -13.0 * this.time_per_frame, 30.45 * this.time_per_frame, 0);
+
+
+
+        // LIBS.translate(this.lower_arm_matrix, -12.75 * this.time_per_frame, 8.7 * this.time_per_frame, 0);
+        // LIBS.rotateZ(this.lower_arm_matrix, (-3 * Math.PI/4) * (this.time_per_frame));
+        // LIBS.translate(this.lower_arm_matrix, 12.75 * this.time_per_frame, -8.7 * this.time_per_frame, 0);
+
+
+        this.lower_arm_matrix_inverse = LIBS.get_I4();
+        // LIBS.translate(this.lower_arm_matrix_inverse, 13.0 * this.time_per_frame, -30.45 * this.time_per_frame, 0);
+        // LIBS.rotateZ(this.lower_arm_matrix_inverse, (Math.PI) * this.time_per_frame);
+        // LIBS.translate(this.lower_arm_matrix_inverse, -13.0 * this.time_per_frame, 30.45 * this.time_per_frame, 0);
+        // LIBS.translate(this.lower_arm_matrix_inverse, 5 * this.time_per_frame, 0, 0);
+        // LIBS.translate(this.lower_arm_matrix_inverse, 13.0 * this.time_per_frame, -30.45 * this.time_per_frame, 0);
+        // LIBS.translate(this.lower_arm_matrix_inverse, -12.75 * this.time_per_frame, 8.7 * this.time_per_frame, 0);
+        // LIBS.rotateZ(this.lower_arm_matrix_inverse, (3 * Math.PI/4) * (this.time_per_frame));
+        // LIBS.translate(this.lower_arm_matrix_inverse, 12.75 * this.time_per_frame, -8.7 * this.time_per_frame, 0);
+        // LIBS.translate(this.lower_arm_matrix_inverse, -13.0 * this.time_per_frame, 30.45 * this.time_per_frame, 0);
+
 
         LIBS.rotateY(this.r_arm.LOCAL_MATRIX, Math.PI);
     }
 
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
+    rotate(){
+        if (this.time_br > 9) this.negate_br = false;
+        else if (this.time_br < 0) this.negate_br = true;
+        this.negate_br ? this.time_br += 0.1 : this.time_br -= 0.1;
 
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
+        if (this.startBl_thigh) {
+            if (this.time_bl > 9) this.negate_bl = false;
+            else if (this.time_bl < 0) this.negate_bl = true;
+            this.negate_bl ? this.time_bl += 0.1 : this.time_bl -= 0.1;
+        }
+
+        if (this.startFl_thigh) {
+            if (this.time_fl > 9) this.negate_fl = false;
+            else if (this.time_fl < 0) this.negate_fl = true;
+            this.negate_fl ? this.time_fl += 0.1 : this.time_fl -= 0.1;
+        }
+
+        if (this.startFr_thigh) {
+            if (this.time_fr > 9) this.negate_fr = false;
+            else if (this.time_fr < 0 ) this.negate_fr = true;
+            this.negate_fr ? this.time_fr += 0.1 : this.time_fr -= 0.1;
+        }
+
+        if (this.time_arm > 4) this.negate_arm = false;
+        else if (this.time_arm < 0) this.negate_arm = true;
+        this.negate_arm ? this.time_arm += 0.1 : this.time_arm -= 0.1;
+
+
+        var matrix_br_thigh;
+        var matrix_bl_thigh;
+        var matrix_fr_thigh;
+        var matrix_fl_thigh;
+        var move_matrix_br_thigh;
+        var move_matrix_bl_thigh;
+        var move_matrix_fr_thigh;
+        var move_matrix_fl_thigh;
+
+        var matrix_lower_arm;
+
+        this.negate_br ?  matrix_br_thigh = this.br_thigh_matrix: matrix_br_thigh = this.br_thigh_matrix_inverse;
+        this.negate_bl ? matrix_bl_thigh = this.bl_thigh_matrix : matrix_bl_thigh = this.bl_thigh_matrix_inverse;
+        this.negate_fl ? matrix_fl_thigh = this.fl_thigh_matrix : matrix_fl_thigh = this.fl_thigh_matrix_inverse;
+        this.negate_fr ? matrix_fr_thigh = this.fr_thigh_matrix : matrix_fr_thigh = this.fr_thigh_matrix_inverse;
+
+        console.log(this.negate_fl);
+        this.negate_arm ? matrix_lower_arm = this.lower_arm_matrix : matrix_lower_arm = this.lower_arm_matrix_inverse;
+
+        this.negate_br ? move_matrix_br_thigh = LIBS.get_MTranslate(0.17, 0, 0) : move_matrix_br_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
+        this.negate_bl ? move_matrix_bl_thigh = LIBS.get_MTranslate(0.17, 0, 0) : move_matrix_bl_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
+        this.negate_fl ? move_matrix_fl_thigh = LIBS.get_MTranslate(0.17, 0, 0) : move_matrix_fl_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
+        this.negate_fr ? move_matrix_fr_thigh = LIBS.get_MTranslate(0.17, 0,  0) : move_matrix_fr_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);
+
+        this.animate([LIBS.get_MRotateY(Math.PI/2 * this.time_per_frame)]);
+
+        this.br_thigh.animate([matrix_br_thigh]);
+        this.br_thigh.animate([move_matrix_br_thigh]);
+
+
+        this.l_arm.animate([LIBS.get_I4(), LIBS.get_I4(), LIBS.get_I4(), matrix_lower_arm]);
+
+
+        // this.r_arm.animate([LIBS.get_I4(), LIBS.get_I4(), LIBS.get_I4(), matrix_lower_arm]);
+
+
+        if (this.time_br >= 1/3 * 9) {
+            this.startBl_thigh = true;
+        }
+        if (this.time_br >= 2/3 * 9) {
+            this.startFl_thigh = true;
+        }
+        if (this.time_br >= 9) {
+            this.startFr_thigh = true;
+        }
+
+        if (this.startBl_thigh) {
+            this.bl_thigh.animate([matrix_bl_thigh]);
+            this.bl_thigh.animate([move_matrix_bl_thigh]);
+        }
+        if (this.startFl_thigh) {
+            this.fl_thigh.animate([matrix_fl_thigh]);
+            this.fl_thigh.animate([move_matrix_fl_thigh]);
+        }
+        if (this.startFr_thigh) {
+            this.fr_thigh.animate([matrix_fr_thigh]);
+            this.fr_thigh.animate([move_matrix_fr_thigh]);
+        }
+
+    }
+
+    // TAMBAH NEGATE UNTUK MASING2 THIGH, DIMULAI DARI WAKTU START
+
+    render(VIEW_MATRIX, PROJECTION_MATRIX, dt) {
+        this.rotate(dt);
+
+        // var temp = LIBS.get_I4();
+        // this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -79,13 +275,6 @@ class Squidward_head extends ColoredObject {
         LIBS.translateY(this.nose.LOCAL_MATRIX, -10);
         LIBS.rotateX(this.nose.LOCAL_MATRIX, -Math.PI/16);
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_eye extends ColoredObject {
@@ -107,13 +296,6 @@ class Squidward_eye extends ColoredObject {
             this.eyeball
         ]
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_eyeball extends ColoredObject {
@@ -129,13 +311,6 @@ class Squidward_eyeball extends ColoredObject {
         LIBS.translateY(this.LOCAL_MATRIX, 41.8);
         LIBS.translateX(this.LOCAL_MATRIX, -1.78);
         LIBS.translateZ(this.LOCAL_MATRIX, 2.77);
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -166,13 +341,6 @@ class Squidward_nose extends ColoredObject {
             this.upper_nose
         ];
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_upper_nose extends ColoredObject {
@@ -197,13 +365,6 @@ class Squidward_upper_nose extends ColoredObject {
         ));
 
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_skull extends ColoredObject {
@@ -226,13 +387,6 @@ class Squidward_skull extends ColoredObject {
         this.childs = [
             this.mouth, this.cheeks
         ];
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -263,33 +417,19 @@ class Squidward_mouth extends ColoredObject {
         ));
 
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_single_arm extends ColoredObject {
     squidward_sleeve = null;
-    squidward_arm = null;
+    squidward_upper_arm = null;
     constructor(shader_program) {
         super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
         this.squidward_sleeve = new Squidward_sleeve(shader_program);
-        this.squidward_arm = new Squidward_arm(shader_program);
+        this.squidward_upper_arm = new Squidward_upper_arm(shader_program);
 
         this.childs = [
-          this.squidward_sleeve, this.squidward_arm
+          this.squidward_sleeve, this.squidward_upper_arm
         ];
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -308,24 +448,55 @@ class Squidward_sleeve extends ColoredObject {
         // LIBS.translateX(this.LOCAL_MATRIX, 10)
         LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/64);
     }
+}
 
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
+class Squidward_upper_arm extends ColoredObject {
+    lower_arm = null;
+    constructor(shader_program) {
+        super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
+        this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.height_circle.createVertex(
+            {},
+            [-7.0, 30.45, 0],
+            [-3, 0.9, 0.9],
+            [1, 0, 2],
+            [1]
+        ));
+        this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
+        this.vertex.push(...QUADRIC.ellipsoid.createVertex(
+            {},
+            [-10.0, 30.45, 0],
+            [0.9, 0.9, 0.9],
+            [1, 0, 2],
+            []
+        ));
 
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+
+        this.lower_arm = new Squidward_lower_arm(shader_program);
+        this.childs = [
+            this.lower_arm
+        ]
+
+        // LIBS.translateX(this.lower_arm.LOCAL_MATRIX, -1);
+        // LIBS.translate(this.lower_arm.LOCAL_MATRIX, 13.0, -30.45, 0);
+        // LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/128);
+        // LIBS.rotateZ(this.lower_arm.LOCAL_MATRIX, (-Math.PI/4 - Math.PI/8));
+        // LIBS.translate(this.lower_arm.LOCAL_MATRIX, -12.75, 8.7, 0);
+        //
+        // LIBS.translate(this.lower_arm.LOCAL_MATRIX, 12.75, -8.7, 0);
+        // LIBS.rotateZ(this.lower_arm.LOCAL_MATRIX, Math.PI/4 + Math.PI/8);
     }
 }
 
-class Squidward_arm extends ColoredObject {
+class Squidward_lower_arm extends ColoredObject {
     hand = null;
     constructor(shader_program) {
         super([], [], shader_program, 0.0, 1.0, 1.0, 1.0);
         this.faces.push(...QUADRIC.height_circle.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.height_circle.createVertex(
             {},
-            [-11.0, 30.45, 0],
-            [-5, 0.9, 0.9],
+            [-13.0, 30.45, 0],
+            [-3, 0.9, 0.9],
             [1, 0, 2],
             [1]
         ));
@@ -335,14 +506,8 @@ class Squidward_arm extends ColoredObject {
         this.childs = [
             this.hand
         ];
-        LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/128)
-    }
 
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
 
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -352,7 +517,7 @@ class Squidward_hand extends ColoredObject {
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},
-            [-16.0, 30.45, 0],
+            [-18.0, 30.45, 0],
             [-5, 1.7, 1.1],
             [],
             [0, Math.PI/2]
@@ -360,20 +525,13 @@ class Squidward_hand extends ColoredObject {
         this.faces.push(...QUADRIC.ellipsoid.createFaces(this.vertex.length/5));
         this.vertex.push(...QUADRIC.ellipsoid.createVertex(
             {},
-            [-16.0, 30.45, 0],
+            [-18.0, 30.45, 0],
             [-5, 0.8, 1.1],
             [],
             [0, -Math.PI/2]
         ))
 
-        LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/128)
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+        LIBS.rotateZ(this.LOCAL_MATRIX, Math.PI/128);
     }
 }
 
@@ -389,13 +547,6 @@ class Squidward_torso extends ColoredObject {
             this.hip, this.upper_stomach
         ]
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_upper_stomach extends ColoredObject {
@@ -409,21 +560,6 @@ class Squidward_upper_stomach extends ColoredObject {
             [],
             [0, 15]
         ));
-        // this.faces.push(...QUADRIC.cylinder.createFaces(this.vertex.length/5));
-        // this.vertex.push(...QUADRIC.cylinder.createVertex(
-        //     {},
-        //     [0, 30, 0],
-        //     [20, 20, 20],
-        //     [],
-        //     [],
-        // ));
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
 
@@ -439,39 +575,25 @@ class Squidward_hip extends ColoredObject {
             [0, -Math.PI/2 + 0.45]
         ));
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 
 class Squidward_single_leg extends ColoredObject {
     thigh = null;
-    tentacle = null;
     constructor(shader_program) {
         super([], [], shader_program, 0, 1.0, 1.0, 1.0);
         this.thigh = new Squidward_thigh(shader_program);
         this.tentacle = new Squidward_tentacles(shader_program);
         this.childs = [
-          this.thigh, this.tentacle
+          this.thigh
         ];
 
         LIBS.translateX(this.LOCAL_MATRIX, 2);
     }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
-    }
 }
 
 class Squidward_thigh extends ColoredObject {
+    tentacle = null;
     constructor(shader_program) {
         super([], [], shader_program, 0, 1.0, 1.0, 1.0);
         this.faces.push(...QUADRIC.height_saddle.createFaces(this.vertex.length/5));
@@ -484,19 +606,10 @@ class Squidward_thigh extends ColoredObject {
             -6)
         );
 
-
-        // LIBS.rotateY(this.LOCAL_MATRIX, Math.PI);
-        // this.tentacles = new Squidward_tentacles(shader_program);
-        // this.childs = [
-        //     this.tentacles
-        // ]
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
+        this.tentacle = new Squidward_tentacles(shader_program);
+        this.childs = [
+          this.tentacle
+        ];
     }
 }
 
@@ -511,12 +624,5 @@ class Squidward_tentacles extends ColoredObject {
             [],
             [0, Math.PI/2]
         ));
-    }
-
-    render(VIEW_MATRIX, PROJECTION_MATRIX) {
-        temp = LIBS.get_I4();
-
-        this.LOCAL_MATRIX = LIBS.multiply(temp, this.LOCAL_MATRIX);
-        super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }

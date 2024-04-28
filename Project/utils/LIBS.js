@@ -19,6 +19,20 @@ var LIBS = {
         return res;
     },
 
+    multiply_with_const: function (m, number) {
+      var res = this.get_I4();
+      var N = 4;
+        for (var i = 0; i < N; i++) {
+            for (var j = 0; j < N; j++) {
+                res[i * N + j] = 0;
+                for (var k = 0; k < N; k++) {
+                    res[i * N + j] += m[i * N + k] * number;
+                }
+            }
+        }
+        return res;
+    },
+
     get_projection: function (angle, a, zMin, zMax) {
         var tan = Math.tan(LIBS.degToRad(0.5 * angle)),
             A = -(zMax + zMin) / (zMax - zMin),
@@ -98,14 +112,42 @@ var LIBS = {
         m[9] = c * m[9] + s * mv8;
     },
 
-    // get_MRotate: function (x, y, z) {
-    //     return [
-    //         1, 0, 0, 0,
-    //         0, 1, 0, 0,
-    //         0, 0, 1, 0,
-    //         0, 0, 0, 1
-    //     ];
-    // },
+    get_MRotateX: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            1, 0, 0, 0,
+            0, cos, -sin, 0,
+            0, sin, cos, 0,
+            0, 0, 0, 1
+        ];
+    },
+
+    get_MRotateY: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            cos, 0, sin, 0,
+            0, 1, 0, 0,
+            -sin, 0, cos, 0,
+            0, 0, 0, 1
+        ];
+    },
+
+    get_MRotateZ: function (angle) {
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        return [
+            cos, -sin, 0, 0,
+            sin, cos, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        ];
+    },
+
 
     translate: function (m, x, y, z) {
         m[12] += x;

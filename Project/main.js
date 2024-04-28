@@ -1,8 +1,8 @@
 /** @type {WebGLRenderingContext} */
 
-import {Spongebob} from "./object/character/spongebob.js";
+import {Squidward_house} from "./object/environment/squidward_house.js";
+import {Squidward} from "./object/character/squidward.js";
 import {Skybox} from "./object/terrain/skybox.js";
-import {TexturedObject} from "./object/object.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -99,7 +99,7 @@ function main() {
         ALPHA += dY * 2 * Math.PI / CANVAS.height;
 
         // ALPHA = Math.max(Math.min(0,ALPHA), -Math.PI/2);
-        
+
         if (THETA >= Math.PI){
             THETA -= 2 * Math.PI;
         }else if (THETA <= -Math.PI){
@@ -177,22 +177,19 @@ function main() {
     //matrix
     var PROJECTION_MATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 0.1, 1000);
     var VIEW_MATRIX = LIBS.get_I4();
+    var MODEL_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    var spongebob = new Spongebob(Shader.TEXTURE);
-    // var land = new Skybox(Shader.TEXTURE);
     var squidward = new Squidward(Shader.COLOR);
+    var squidward_house = new Squidward_house(Shader.COLOR);
     var land = new Skybox(Shader.TEXTURE);
 
     var colored_object = [
-      squidward
+        // squidward,
+        squidward_house
     ];
     var vertex_colored_object = [
-    ];
-
-    var textured_object = [
-        // land,
-        spongebob,
+        // spongebob,
     ];
 
     var test_plane = [
@@ -207,9 +204,9 @@ function main() {
         // new TexturedObject(
         //     PLANE.rectangle.createVertex(
         //         {vT: true},
-        //         [0,20,0],
-        //         [20,-20,20],
-        //         [0,2,1]
+        //         [-5,0,0],
+        //         [],
+        //         [0,1,2]
         //     ),
         //     PLANE.rectangle.createFaces(0), Shader.TEXTURE),
     ];
@@ -309,9 +306,6 @@ function main() {
     for (let i = 0; i < vertex_colored_object.length; i++) {
         vertex_colored_object[i].setup();
     }
-    for (let i = 0; i < textured_object.length; i++) {
-        textured_object[i].setup();
-    }
     for (let i = 0; i < test_quadric.length; i++) {
         test_quadric[i].setup();
     }
@@ -386,14 +380,10 @@ function main() {
             test_quadric[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
 
-        for (let i = 0; i < textured_object.length; i++) {
-            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
-        }
-
-        // GL.bindTexture(GL.TEXTURE_2D, Texture[6]);
         for (let i = 0; i < test_plane.length; i++) {
             test_plane[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
         }
+        land.render(VIEW_MATRIX, PROJECTION_MATRIX);
 
         /*========================= DATA ========================= */
         node[0].nodeValue = pX.toFixed(0) + ", " + pY.toFixed(0) + ", " + pZ.toFixed(0);

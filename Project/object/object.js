@@ -139,7 +139,7 @@ class ColoredObject extends BaseObject{
     _greyScality = null;
 
     constructor(vertex, faces, shader_program, red, green, blue, grayScale) {
-        super(vertex, faces, shader_vertex_source, shader_fragment_source);
+        super(vertex, faces, shader_program);
         this._color = GL.getUniformLocation(shader_program, "vColor");
         this._greyScality = GL.getUniformLocation(shader_program, "greyScality");
 
