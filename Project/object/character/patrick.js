@@ -84,103 +84,67 @@ class Patrick extends TexturedObject{
         // LIBS.scale(this.LOCAL_MATRIX,10,10,10);
         // LIBS.scale(this.WORLD_MATRIX,0,10,0);
 
-        // this.hand_matrix = LIBS.get_I4();
-        // LIBS.translate(this.hand_matrix,0.01,0,0.01);
-        // LIBS.rotateY(this.hand_matrix,-Math.PI/4 * 0.01);
-        // LIBS.rotateZ(this.hand_matrix,Math.PI/8 * 0.01);
-
-        // LIBS.rotateY(this.hand_matrix,Math.PI/4 * 0.01);
-        // LIBS.translate(this.hand_matrix,-0.01,0,-0.01);
-        // LIBS.translate(this.hand_matrix,5.5 * 0.01, 0, -0 * 0.01);
-
-        // this.hand_matrix_inverse = LIBS.get_I4();
-        // LIBS.translate(this.hand_matrix_inverse,0.01,0,0.01);
-        // LIBS.rotateY(this.hand_matrix_inverse,-Math.PI/4 * 0.01);
-        // LIBS.rotateZ(this.hand_matrix_inverse,-Math.PI/8 * 0.01);
-
-        // LIBS.rotateY(this.hand_matrix_inverse,Math.PI/4 * 0.01);
-        // LIBS.translate(this.hand_matrix_inverse,-0.01,0,-0.01);
-        // LIBS.translate(this.hand_matrix_inverse,-5.5 * 0.01, 0, -0 * 0.01);
-        
-        // this.idle_matrix = LIBS.get_I4();
-        // // LIBS.rotate(this.idle_matrix,Math.PI/8*0.1,Math.PI/8*0.1,0);
-        // // LIBS.translateY(this.idle_matrix,0.01);
-        // // LIBS.rotateY(this.idle_matrix,Math.PI/4*0.01);
-
-        // this.idle_matrix_inverse = LIBS.get_I4();
-        // // LIBS.translateY(this.idle_matrix,0.01);
-        // // LIBS.rotateY(this.idle_matrix,-Math.PI/4*0.01);
-
-
+        this.negate_idle = false;
+        this.time_idle = 0;
         this.idle_matrix = LIBS.get_I4();
-        LIBS.translateY(this.idle_matrix,0.01);
+        LIBS.translateZ(this.idle_matrix,Math.PI*0.003);
+        LIBS.rotateY(this.idle_matrix,Math.PI/4*0.003);
+        LIBS.translateZ(this.idle_matrix,4.5*0.003);
 
-        LIBS.translateZ(this.idle_matrix,Math.PI*0.01);
-        LIBS.rotateY(this.idle_matrix,Math.PI/4*0.01);
-        LIBS.translateZ(this.idle_matrix,5*0.01);
-        
         this.idle_matrix_inverse = LIBS.get_I4();
-        LIBS.translateY(this.idle_matrix_inverse,-0.01);
+        LIBS.translateZ(this.idle_matrix,Math.PI*0.003);
+        LIBS.rotateY(this.idle_matrix,Math.PI/4*0.003);
+        LIBS.translateZ(this.idle_matrix,4.5*0.003);
 
-        LIBS.translateZ(this.idle_matrix,Math.PI*0.01);
-        LIBS.rotateY(this.idle_matrix,Math.PI/4*0.01);
-        LIBS.translateZ(this.idle_matrix,5*0.01);
+        this.negate_hand = false;
+        this.time_hand = 0;
 
-        this.negate_r_hand = false;
-        this.time_r_hand = 0;
-        this.r_hand_matrix = LIBS.get_I4();
-        LIBS.translateZ(this.r_hand_matrix,-0.01);
-
-        this.r_hand_matrix_inverse = LIBS.get_I4();
-        LIBS.translateZ(this.r_hand_matrix_inverse,0.01);
-
-        //r move
-        this.negate_r_move = false;
-        this.time_r_move = 0;
-
-        this.r_move_matrix = LIBS.get_I4();
-        LIBS.rotateX(this.r_move_matrix,1);
-        console.log(this.r_move_matrix);
-
-        this.r_move_matrix_inverse = LIBS.get_I4();
-        LIBS.rotateX(this.r_move_matrix_inverse,-0.01);
-        console.log(this.r_move_matrix_inverse);
-
-
+        this.negate_foot = false;
+        this.time_foot = 0;
     }
 
     rotate(){
-        if (this.time > 10) this.negate = true;
-        else if (this.time < -10) this.negate = false;
-        this.negate ? this.time -= 0.1 : this.time += 0.1;
         var matrix1, matrix2, matrix3, matrix4, matrix5, matrix6;
-        this.negate ? matrix1 = this.idle_matrix : matrix1 = this.idle_matrix_inverse;
+
+        if (this.time > 1) this.negate = true;
+        else if (this.time < -1) this.negate = false;
+        this.negate ? this.time -= 0.1 : this.time += 0.1;
+        matrix1 = this.negate ? LIBS.get_MTranslate(0,0.01,0) : LIBS.get_MTranslate(0,-0.01,0);
         var idle = [matrix1];
+        this.animate(idle);
 
-        //tangan kanan
-        if (this.time_r_hand > 5) this.negate_r_hand = true;
-        else if (this.time_r_hand < -0.5) this.negate_r_hand = false;
-        this.negate_r_hand ? this.time_r_hand -= 0.1 : this.time_r_hand += 0.1;
+        if (this.time_hand > 0.5) this.negate_hand = true;
+        else if (this.time_hand < -0.5) this.negate_hand = false;
+        this.negate_hand ? this.time_hand -= 0.01 : this.time_hand += 0.01;
 
-        this.negate_r_hand ? matrix3 = this.r_hand_matrix : matrix3 = this.r_hand_matrix_inverse;
-        this.negate_r_hand ? matrix4 = this.r_hand_matrix_inverse : matrix4 = this.r_hand_matrix;
-        
-        var r_hand = [matrix3,matrix4];
+        matrix2 = this.negate_hand ? LIBS.get_MRotateZ((Math.PI/8)*0.02) : LIBS.get_MRotateZ((-Math.PI/8)*0.02);
+        matrix3 = this.negate_hand ? LIBS.get_MRotateZ((-Math.PI/8)*0.02) : LIBS.get_MRotateZ((Math.PI/8)*0.02);
+        var l_hand = [matrix2];
+        var r_hand = [matrix3];
 
-        //rotate tangan kanan
-        if (this.time_r_move > 1) this.negate_r_move = true;
-        else if (this.time_r_move < -1) this.negate_r_move = false;
-        this.negate_r_move ? this.time_r_move -= 0.01 : this.time_r_move += 0.01;
+        this.l_arm.animate(l_hand);
+        this.r_arm.animate(r_hand);
 
-        matrix5 = this.negate.r_move ? this.r_move_matrix : this.r_move_matrix_inverse;
-        matrix6 = this.negate.r_move ? this.r_move_matrix : this.r_move_matrix_inverse;
-        // console.log(this.negate_r_move);
-        // var r_move = [matrix5,matrix6];
+        if (this.time_foot > 0.5) this.negate_foot = true;
+        else if (this.time_foot < -0.5) this.negate_foot = false;
+        this.negate_foot ? this.time_foot -= 0.01 : this.time_foot += 0.01;
 
-        // this.animate(idle);
-        // this.r_arm.animate(r_move);
-        // this.r_arm.l_arm.animate(r_hand);
-        // this.l_arm.animate(arr);
+        matrix4 = this.negate_foot ? LIBS.get_MRotateX((Math.PI/8)*0.02) : LIBS.get_MRotateX((-Math.PI/8)*0.02)
+        matrix5 = this.negate_foot ? LIBS.get_MRotateX((-Math.PI/8)*0.02) : LIBS.get_MRotateX((Math.PI/8)*0.02)
+        var l_foot = [matrix4];
+        var r_foot = [matrix5];
+
+        this.l_thigh.animate(l_foot);
+        this.r_thigh.animate(r_foot);
+
+        if (this.time_idle > 0.1) this.negate_idle = true;
+        else if (this.time_idle < -0.1) this.negate_idle = false;
+        this.negate_idle ? this.time_idle -= 0.01 : this.time_idle += 0.01;
+
+        matrix6 = this.idle_matrix;
+        var idle_rotate = [matrix6];
+
+        this.animate(idle_rotate);
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX){
