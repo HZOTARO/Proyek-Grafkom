@@ -9,7 +9,7 @@ class Skybox extends TexturedObject{
 
         faces.push(...PLANE.rectangle.createFaces(vertex.length/5));
         vertex.push(...PLANE.rectangle.createVertex(
-            {vT: true, t_e: [25, 25]},
+            {vT: true, t_e: [100, 100]},
             [],
             [1000,1,1000],
             [],

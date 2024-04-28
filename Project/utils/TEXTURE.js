@@ -11,7 +11,8 @@ var TEXTURE = {
             "spongebob_house",
             "squidward_house",
             "glass",
-            "brown"
+            "brown",
+            "road"
         ];
         var textures = [];
         for (const name of src) {

@@ -143,18 +143,19 @@ class Spongebob extends TexturedObject{
     negate = false;
     rot_angle = 0;
     angle = Math.PI/2;
-    speed = 3;
+    speed = 1;
+    anim_speed = 3;
 
     run(dt){
         var blank = LIBS.get_I4();
-        var mov_a = Math. floor(Math. random()*2) - 2;
+        var mov_a = Math.floor(Math. random()*2) - 2;
         if (this.rot_angle >= Math.PI/2) this.negate = true;
         if (this.rot_angle <= -Math.PI/2) this.negate = false;
-        var rotate = Math.PI/2 * dt/1000 * (this.negate ? -1:1) * this.speed;
+        var rotate = Math.PI/2 * dt/1000 * (this.negate ? -1:1) * this.anim_speed;
         this.rot_angle += rotate;
         var mov = Math.abs(rotate/20) * mov_a;
         this.angle += mov;
-        LIBS.translate(this.WORLD_MATRIX, -Math.cos(this.angle) * 0.5,0, Math.sin(this.angle) * 0.5);
+        LIBS.translate(this.WORLD_MATRIX, -Math.cos(this.angle) * this.speed,0, Math.sin(this.angle) * this.speed);
         this.animate([
             LIBS.get_MRotate(0, mov + rotate/10,0),
             LIBS.get_MRotate(rotate,0,0),

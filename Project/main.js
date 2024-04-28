@@ -6,6 +6,7 @@ import {Spongebob_house} from "./object/environment/terrain/spongebob_house.js";
 import {Squidward_house} from "./object/environment/terrain/squidward_house.js";
 import {Squidward} from "./object/character/squidward.js";
 import {Flower} from "./object/environment/terrain/flower.js";
+import {road, tiledRoad} from "./object/environment/terrain/road.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -49,7 +50,7 @@ function main() {
 
     var THETA = 0;
     var ALPHA = Math.PI/4;
-    var SPEED = 5;
+    var SPEED = 0.5;
 
     function loadRotation() {
         // Update THETA and ALPHA from localStorage
@@ -140,7 +141,6 @@ function main() {
             pZ = -50;
             THETA = 0;
             ALPHA = Math.PI/4;
-            SPEED = 0;
         }
         else {
             return;
@@ -175,20 +175,52 @@ function main() {
 
     /*========================= OBJECTS ========================= */
     var world = new Skybox(Shader.TEXTURE);
+
     var spongebob = new Spongebob(Shader.TEXTURE, 5);
+    LIBS.scale(spongebob.WORLD_MATRIX,0.1,0.1,0.1);
+    LIBS.translate(spongebob.WORLD_MATRIX,35,-18,25);
+    spongebob.speed = 0.05;
+
     var squidward = new Squidward(Shader.COLOR);
+    LIBS.scale(squidward.WORLD_MATRIX,0.1,0.1,0.1);
+    LIBS.translate(squidward.WORLD_MATRIX,0,-2,20);
+
     var spongebob_house = new Spongebob_house(Shader.TEXTURE, 7);
+    LIBS.scale(spongebob_house.WORLD_MATRIX,0.14,0.14,0.14);
+    LIBS.translate(spongebob_house.WORLD_MATRIX,22,0,0);
+
     var squidward_house = new Squidward_house(Shader.TEXTURE);
-    var flower = new Flower(Shader.COLOR);
+
+    // var flower = new Flower(Shader.COLOR);
+    var roads =[];
+    var plain_road = new road(Shader.TEXTURE,11);
+    LIBS.scale(plain_road.WORLD_MATRIX,2.5,1,10);
+    LIBS.translate(plain_road.WORLD_MATRIX,-22,0,15);
+    roads = [plain_road]
+
+    var tiled_road = new tiledRoad(Shader.TEXTURE,11);
+    LIBS.scale(tiled_road.WORLD_MATRIX,2.5,1,10);
+    LIBS.translate(tiled_road.WORLD_MATRIX,21.72,0,15);
+    roads = [tiled_road]
+
+
+    for (let i = -100; i < 100; i++) {
+        var temp_road = new road(Shader.TEXTURE,11);
+        LIBS.scale(temp_road.WORLD_MATRIX,2.5,1,10);
+        LIBS.rotateY(temp_road.WORLD_MATRIX,Math.PI/2);
+        LIBS.translate(temp_road.WORLD_MATRIX,20*i,0,27.5);
+        roads.push(temp_road);
+    }
 
     var colored_object = [
         squidward,
-        flower,
+        // flower,
     ];
 
     var textured_object = [
         spongebob_house,
         squidward_house,
+        ...roads,
     ];
 
     var character_object = [
@@ -233,13 +265,13 @@ function main() {
 
             // ALPHA = Math.max(Math.min(0,ALPHA), -Math.PI/2);
         }
-        mX *= FRICTION;
-        mZ *= FRICTION;
-        mY *= FRICTION;
-
         pX += mX;
         pY += mY;
         pZ += mZ;
+
+        mX *= FRICTION;
+        mZ *= FRICTION;
+        mY *= FRICTION;
 
         /*========================= CAMERA ========================= */
         VIEW_MATRIX = LIBS.get_I4();
