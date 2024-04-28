@@ -1,10 +1,12 @@
 /** @type {WebGLRenderingContext} */
 
-import {Spongebob} from "./object/character/spongebob.js";
 import {Skybox} from "./object/environment/skybox.js";
+import {Spongebob} from "./object/character/spongebob.js";
+import {Patrick} from "./object/character/patrick.js";
+import {Squidward} from "./object/character/squidward.js";
 import {Spongebob_house} from "./object/environment/terrain/spongebob_house.js";
 import {Squidward_house} from "./object/environment/terrain/squidward_house.js";
-import {Squidward} from "./object/character/squidward.js";
+import {rumahPatrick} from "./object/environment/terrain/Rumah_Patrick.js";
 import {Flower} from "./object/environment/terrain/flower.js";
 import {road, tiledRoad} from "./object/environment/terrain/road.js";
 
@@ -181,6 +183,10 @@ function main() {
     LIBS.translate(spongebob.WORLD_MATRIX,35,-18,25);
     spongebob.speed = 0.05;
 
+    var patrick = new Patrick(Shader.TEXTURE);
+    LIBS.scale(patrick.WORLD_MATRIX,0.6,0.6,0.6);
+    LIBS.translate(patrick.WORLD_MATRIX,-30,0,20);
+
     var squidward = new Squidward(Shader.COLOR);
     LIBS.scale(squidward.WORLD_MATRIX,0.1,0.1,0.1);
     LIBS.translate(squidward.WORLD_MATRIX,0,-2,20);
@@ -188,6 +194,10 @@ function main() {
     var spongebob_house = new Spongebob_house(Shader.TEXTURE, 7);
     LIBS.scale(spongebob_house.WORLD_MATRIX,0.14,0.14,0.14);
     LIBS.translate(spongebob_house.WORLD_MATRIX,22,0,0);
+
+    var RumahPatrick = new rumahPatrick(Shader.TEXTURE);
+    LIBS.scale(RumahPatrick.WORLD_MATRIX,1.1,1.3,1.1);
+    LIBS.translate(RumahPatrick.WORLD_MATRIX,-33,-1.4,0);
 
     var squidward_house = new Squidward_house(Shader.TEXTURE);
 
@@ -201,7 +211,7 @@ function main() {
     var tiled_road = new tiledRoad(Shader.TEXTURE,11);
     LIBS.scale(tiled_road.WORLD_MATRIX,2.5,1,10);
     LIBS.translate(tiled_road.WORLD_MATRIX,21.72,0,15);
-    roads = [tiled_road]
+    roads.push(tiled_road)
 
 
     for (let i = -100; i < 100; i++) {
@@ -220,11 +230,13 @@ function main() {
     var textured_object = [
         spongebob_house,
         squidward_house,
+        RumahPatrick,
         ...roads,
     ];
 
     var character_object = [
         spongebob,
+        patrick
     ];
 
     /*========================= SETUP ========================= */

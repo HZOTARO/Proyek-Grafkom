@@ -6,13 +6,22 @@ var TEXTURE = {
             "cube",
             "sand",
             "dome",
+
             "spongebob",
             "patrick",
             "spongebob_house",
             "squidward_house",
             "glass",
+
             "brown",
-            "road"
+            "road",
+            "celana_patrick",
+            "rumah_patrick",
+            "skin_patrick",
+
+            "mata_patrick",
+            "antenna",
+            "topi_patrick",
         ];
         var textures = [];
         for (const name of src) {
