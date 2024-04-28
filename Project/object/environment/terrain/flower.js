@@ -1,4 +1,4 @@
-import {ColoredObject} from "../object.js";
+import {ColoredObject} from "../../object.js";
 
 export {Flower}
 function reshapeArray(array, size) {
@@ -219,7 +219,6 @@ class Flower extends ColoredObject{
         ]
 
         controlPoints = reshapeArray(controlPoints, 2);
-        console.log(controlPoints);
 
         var count = 60;
         var offset = 0;

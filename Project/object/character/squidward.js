@@ -200,7 +200,6 @@ class Squidward extends ColoredObject {
         this.negate_fl ? matrix_fl_thigh = this.fl_thigh_matrix : matrix_fl_thigh = this.fl_thigh_matrix_inverse;
         this.negate_fr ? matrix_fr_thigh = this.fr_thigh_matrix : matrix_fr_thigh = this.fr_thigh_matrix_inverse;
 
-        console.log(this.negate_fl);
         this.negate_arm ? matrix_lower_arm = this.lower_arm_matrix : matrix_lower_arm = this.lower_arm_matrix_inverse;
 
         this.negate_br ? move_matrix_br_thigh = LIBS.get_MTranslate(0.17, 0, 0) : move_matrix_br_thigh = LIBS.get_MTranslate(-0.17, -0.002, 0);

@@ -2,10 +2,9 @@
 
 import {Spongebob} from "./object/character/spongebob.js";
 import {Skybox} from "./object/environment/skybox.js";
-import {Spongebob_house} from "./object/environment/terrain/Spongebob_house.js";
+import {Spongebob_house} from "./object/environment/terrain/spongebob_house.js";
 import {Squidward_house} from "./object/environment/terrain/squidward_house.js";
 import {Squidward} from "./object/character/squidward.js";
-import {Skybox} from "./object/environment/skybox.js";
 import {Flower} from "./object/environment/terrain/flower.js";
 
 function main() {
@@ -50,7 +49,7 @@ function main() {
 
     var THETA = 0;
     var ALPHA = Math.PI/4;
-    var SPEED = 0.5;
+    var SPEED = 5;
 
     function loadRotation() {
         // Update THETA and ALPHA from localStorage
@@ -131,11 +130,9 @@ function main() {
         }
         else if (e.key === 'q') {
             A += Math.PI/2;
-            SPEED /= 2;
         }
         else if (e.key === 'e') {
             A -= Math.PI/2;
-            SPEED /= 2;
         }
         else if (e.key === 'f'){
             pX = 0;
@@ -154,8 +151,6 @@ function main() {
         mX += SPEED * Math.cos(A) * Math.sin(T);
         mZ += SPEED * Math.cos(A) * Math.cos(T);
         mY += SPEED * Math.sin(A);
-
-        SPEED = 0.5;
     }
 
     CANVAS.addEventListener("mousedown", mouseDown, false);
@@ -182,7 +177,7 @@ function main() {
     var world = new Skybox(Shader.TEXTURE);
     var spongebob = new Spongebob(Shader.TEXTURE, 5);
     var squidward = new Squidward(Shader.COLOR);
-    var spongebob_house = new Spongebob_house(Shader.TEXTURE, 8);
+    var spongebob_house = new Spongebob_house(Shader.TEXTURE, 7);
     var squidward_house = new Squidward_house(Shader.TEXTURE);
     var flower = new Flower(Shader.COLOR);
 

@@ -1,8 +1,9 @@
-import {ColoredObject, TexturedObject} from "../object.js";
+import {ColoredObject, TexturedObject} from "../../object.js";
 
 export {Squidward_house}
 
 class Squidward_house extends TexturedObject {
+    texture = null;
     body = null;
     l_ear = null;
     r_ear = null;
@@ -16,8 +17,9 @@ class Squidward_house extends TexturedObject {
     l_window = null;
     r_window = null;
 
-    constructor(shader_program) {
+    constructor(shader_program, texture) {
         super([], [], shader_program);
+        this.texture = texture;
         this.body = new Squidward_house_body(shader_program);
         this.l_ear = new Squidward_house_ears(shader_program);
         this.r_ear = new Squidward_house_ears(shader_program);
@@ -52,7 +54,7 @@ class Squidward_house extends TexturedObject {
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX, dt) {
-        GL.bindTexture(GL.TEXTURE_2D, Texture[7]);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[8]);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -127,7 +129,7 @@ class Squidward_eye_inside extends TexturedObject {
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX, dt) {
-        GL.bindTexture(GL.TEXTURE_2D, Texture[8]);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[9]);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
@@ -207,7 +209,7 @@ class Squidward_door extends TexturedObject {
     }
 
     render(VIEW_MATRIX, PROJECTION_MATRIX, dt) {
-        GL.bindTexture(GL.TEXTURE_2D, Texture[9]);
+        GL.bindTexture(GL.TEXTURE_2D, Texture[10]);
         super.render(VIEW_MATRIX, PROJECTION_MATRIX);
     }
 }
