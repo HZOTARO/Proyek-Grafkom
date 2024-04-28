@@ -48,8 +48,7 @@ class BaseObject{
     }
 
     animate(ANIMATE_MATRIX_ARRAY){
-        var x = 0;
-        this.anim_util(ANIMATE_MATRIX_ARRAY,[x]);
+        this.anim_util(ANIMATE_MATRIX_ARRAY,[0]);
     }
 
     anim_util(ANIMATE_MATRIX_ARRAY, index){

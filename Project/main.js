@@ -1,7 +1,8 @@
 /** @type {WebGLRenderingContext} */
 
 import {Spongebob} from "./object/character/spongebob.js";
-import {Skybox} from "./object/terrain/skybox.js";
+import {Skybox} from "./object/environtment/skybox.js";
+import {Spongebob_house} from "./object/environtment/terrain/Spongebob_house.js";
 
 function main() {
     var CANVAS = document.getElementById("myCanvas");
@@ -36,8 +37,8 @@ function main() {
     var dY = 0;
 
     var pX = 0;
-    var pY = -30;
-    var pZ = -30;
+    var pY = -50;
+    var pZ = -50;
 
     var mX = 0;
     var mY = 0;
@@ -57,8 +58,8 @@ function main() {
 
 
         const savedX = localStorage.getItem("xValue") ?? "0";
-        const savedY = localStorage.getItem("yValue") ?? "-30";
-        const savedZ = localStorage.getItem("zValue") ?? "-30";
+        const savedY = localStorage.getItem("yValue") ?? "-50";
+        const savedZ = localStorage.getItem("zValue") ?? "-50";
 
         pX = Number.parseFloat(savedX);
         pY = Number.parseFloat(savedY);
@@ -134,8 +135,8 @@ function main() {
         }
         else if (e.key === 'f'){
             pX = 0;
-            pY = -30;
-            pZ = -30;
+            pY = -50;
+            pZ = -50;
             THETA = 0;
             ALPHA = Math.PI/4;
             SPEED = 0;
@@ -174,13 +175,18 @@ function main() {
     var VIEW_MATRIX = LIBS.get_I4();
 
     /*========================= OBJECTS ========================= */
-    var spongebob = new Spongebob(Shader.TEXTURE, 2);
-    var land = new Skybox(Shader.TEXTURE, 4);
+    var world = new Skybox(Shader.TEXTURE);
+    var spongebob = new Spongebob(Shader.TEXTURE, 5);
+    var s_house = new Spongebob_house(Shader.TEXTURE, 8);
 
     var colored_object = [
     ];
 
     var textured_object = [
+        s_house,
+    ];
+
+    var character_object = [
         spongebob,
     ];
 
@@ -191,8 +197,11 @@ function main() {
     for (let i = 0; i < textured_object.length; i++) {
         textured_object[i].setup();
     }
+    for (let i = 0; i < character_object.length; i++) {
+        character_object[i].setup();
+    }
 
-    land.setup();
+    world.setup();
 
     /*========================= DRAWING ========================= */
     var clear = [0.5, 0.5, 0.5, 0.0];
@@ -250,9 +259,12 @@ function main() {
         }
 
         GL.useProgram(Shader.TEXTURE);
-        land.render(VIEW_MATRIX, PROJECTION_MATRIX);
+        world.render(VIEW_MATRIX, PROJECTION_MATRIX, [pX,pY,pZ]);
         for (let i = 0; i < textured_object.length; i++) {
-            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
+            textured_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX);
+        }
+        for (let i = 0; i < character_object.length; i++) {
+            character_object[i].render(VIEW_MATRIX, PROJECTION_MATRIX, dt);
         }
 
         /*========================= DATA ========================= */
